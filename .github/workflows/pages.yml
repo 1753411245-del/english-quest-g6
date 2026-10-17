@@ -44,6 +44,7 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html _site/
+          cp grade7.html _site/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

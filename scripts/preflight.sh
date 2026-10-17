@@ -64,38 +64,41 @@ if [ -n "$out" ]; then bad "这些文件不该进仓库："; echo "$out" | sed '
 else ok "无敏感文件被纳入版本库"; fi
 
 # -------------------------------------------------------------
-sec "3. 页面运行时安全（index.html）"
-if [ -f index.html ]; then
-  if grep -q 'http-equiv="Content-Security-Policy"' index.html; then
+sec "3. 页面运行时安全（所有 HTML 页面）"
+PAGES=$(ls -1 ./*.html 2>/dev/null | sed 's#^\./##')
+if [ -z "$PAGES" ]; then
+  bad "缺少 HTML 页面"
+fi
+for P in $PAGES; do
+  echo "    · 检查 $P"
+  if grep -q 'http-equiv="Content-Security-Policy"' "$P"; then
     ok "已声明 Content-Security-Policy"
   else bad "缺少 CSP，建议在 <head> 加 default-src 'none' 基线"; fi
 
-  if grep -q 'name="referrer"' index.html; then ok "已设置 referrer 策略"
+  if grep -q 'name="referrer"' "$P"; then ok "已设置 referrer 策略"
   else warn "建议加 <meta name=\"referrer\" content=\"no-referrer\">"; fi
 
-  out=$(grep -nIE '(<script[^>]+src=|<link[^>]+href=[^>]*https?:|<iframe|src="https?:|@import)' index.html)
-  if [ -n "$out" ]; then bad "index.html 引入外部资源（离线与隐私都会失效）："; echo "$out" | sed 's/^/      /'
+  out=$(grep -nIE '(<script[^>]+src=|<link[^>]+href=[^>]*https?:|<iframe|src="https?:|@import)' "$P")
+  if [ -n "$out" ]; then bad "引入外部资源（离线与隐私都会失效）："; echo "$out" | sed 's/^/      /'
   else ok "无外部脚本 / 样式 / iframe 引用"; fi
 
-  out=$(grep -nIE '(fetch\(|XMLHttpRequest|new WebSocket|sendBeacon|navigator\.geolocation|document\.cookie)' index.html)
-  if [ -n "$out" ]; then bad "index.html 存在网络请求或追踪类调用："; echo "$out" | sed 's/^/      /'
+  out=$(grep -nIE '(fetch\(|XMLHttpRequest|new WebSocket|sendBeacon|navigator\.geolocation|document\.cookie)' "$P")
+  if [ -n "$out" ]; then bad "存在网络请求或追踪类调用："; echo "$out" | sed 's/^/      /'
   else ok "无网络请求、无地理定位、无 cookie 写入"; fi
 
-  out=$(grep -nIE 'eval\(|new Function\(|document\.write\(' index.html)
+  out=$(grep -nIE 'eval\(|new Function\(|document\.write\(' "$P")
   if [ -n "$out" ]; then warn "存在动态执行（确认输入来源可信）："; echo "$out" | sed 's/^/      /'
   else ok "无 eval / new Function / document.write"; fi
 
-  if grep -q 'getUserMedia\|SpeechRecognition' index.html; then
-    if grep -q '关于麦克风' index.html; then ok "使用麦克风，且已有授权前说明文案"
+  if grep -q 'getUserMedia\|SpeechRecognition' "$P"; then
+    if grep -q '关于麦克风' "$P"; then ok "使用麦克风，且已有授权前说明文案"
     else bad "调用麦克风但缺少使用前的隐私说明"; fi
   fi
 
-  out=$(grep -nIE 'https?://' index.html)
-  if [ -n "$out" ]; then warn "index.html 出现网址（确认只是文案而非请求）："; echo "$out" | sed 's/^/      /'
-  else ok "index.html 内无任何网址"; fi
-else
-  bad "缺少 index.html"
-fi
+  out=$(grep -nIE 'https?://' "$P")
+  if [ -n "$out" ]; then warn "出现网址（确认只是文案而非请求）："; echo "$out" | sed 's/^/      /'
+  else ok "页面内无任何网址"; fi
+done
 
 # -------------------------------------------------------------
 sec "4. 仓库卫生"
