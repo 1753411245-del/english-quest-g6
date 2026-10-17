@@ -70,6 +70,19 @@ CASES = {
   pickLetter(0); pickLetter(1);
   updateSpellUI();
 ''',
+    # 闯关拼写关：拼满后「检查」亮起（此时还没判题，随时能改）
+    'v_spellready': r'''
+  render(); startLevel('st', 1);
+  var q2 = G.qs[G.i], u2 = [];
+  q2.answer.split('').forEach(function(ch){
+    for (var i = 0; i < q2.letters.length; i++){
+      if (u2.indexOf(i) < 0 && q2.letters[i].toLowerCase() === ch.toLowerCase()){
+        u2.push(i); pickLetter(i); break;
+      }
+    }
+  });
+  updateSpellUI();
+''',
     # 塔防拼写题：填了两个字母，看得到可点格子 + 删一个 / 提交
     'v_tdspell': r'''
   render(); openTd(); tdStart('u1-m1');
