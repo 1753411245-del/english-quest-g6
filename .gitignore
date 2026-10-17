@@ -30,6 +30,7 @@ build/
 .vw*.html
 .vw_*.png
 .shot_*.png
+.shots/
 
 # ---------- 部署暂存目录 ----------
 _site/

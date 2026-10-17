@@ -357,7 +357,13 @@
     font-size:13px;font-weight:800;color:#2b3550;letter-spacing:.2px}
   .tdhud b em{font-style:normal;font-size:11px;font-weight:800;color:#8794b0}
   .tdhud b.life{border-color:#fbd6d8;background:#fff7f7;color:#d63f46}
-  .tdhud b.wave{border-color:#d8e0fb;background:#f6f8ff;color:#4F6BED}
+  .tdhud>b.wave{border-color:#d8e0fb;background:#f6f8ff;color:#4F6BED}
+  .tdhud>b.up{animation:tdGoldUp .62s ease}
+  @keyframes tdGoldUp{0%{transform:scale(1);border-color:#bbe6d3;background:#f1fbf6}
+    35%{transform:scale(1.08)}100%{transform:scale(1)}}
+  .tdhud>b.hurt{animation:tdLifeHurt .5s ease}
+  @keyframes tdLifeHurt{0%,100%{transform:translateX(0)}22%{transform:translateX(-4px)}
+    62%{transform:translateX(4px)}}
   .tdscene{position:relative;border-radius:18px;overflow:hidden;border:1px solid #e2e9fa;
     background:#f4f8ff;box-shadow:0 10px 26px rgba(60,90,160,.09)}
   .tdscene svg{display:block;width:100%;height:auto}
@@ -411,6 +417,29 @@
   .tdresult{text-align:center;padding:6px 0 2px}
   .tdresult .big{font-size:22px;font-weight:800;margin-bottom:6px}
   .tdresult .sm{font-size:13px;color:#8794b0;line-height:1.6;margin-bottom:12px}
+  /* 开火弹道与命中波纹 */
+  .tdshot{animation:tdShot .38s ease-out forwards}
+  @keyframes tdShot{0%{opacity:0;stroke-width:5}16%{opacity:1}100%{opacity:0;stroke-width:1.2}}
+  .tdring{transform-box:fill-box;transform-origin:center;animation:tdRing .5s ease-out forwards}
+  @keyframes tdRing{0%{transform:scale(.35);opacity:.95}100%{transform:scale(2.1);opacity:0}}
+  /* 锁定环：虚线绕着被瞄准的怪流动 */
+  .tdlock{animation:tdLockFlow .9s linear infinite}
+  @keyframes tdLockFlow{to{stroke-dashoffset:-13}}
+  /* 战斗中暂无题可出 */
+  .tdwait{padding:16px 14px}
+  .tdwait-row{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;
+    color:#41506f;margin-bottom:6px}
+  .tdwait-row .dot{width:8px;height:8px;border-radius:50%;background:#4F6BED;
+    box-shadow:0 0 0 0 rgba(79,107,237,.5);animation:tdPulse 1.4s ease-out infinite}
+  @keyframes tdPulse{0%{box-shadow:0 0 0 0 rgba(79,107,237,.45)}
+    70%{box-shadow:0 0 0 9px rgba(79,107,237,0)}100%{box-shadow:0 0 0 0 rgba(79,107,237,0)}}
+  .tdrow2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tdgo.sell{background:#fff3f4;color:#c93a42;box-shadow:none;border:1.5px solid #f8d3d6}
+  .tdtoast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,14px);opacity:0;
+    background:rgba(32,44,70,.94);color:#fff;font-size:13px;font-weight:700;padding:10px 16px;
+    border-radius:12px;pointer-events:none;transition:.24s;z-index:60;
+    max-width:calc(100vw - 40px);text-align:center}
+  .tdtoast.show{opacity:1;transform:translate(-50%,0)}
   .tdmapcard{display:flex;gap:12px;align-items:center;padding:14px;border-radius:18px;
     background:#fff;border:1px solid #e6ecfa;box-shadow:0 8px 22px rgba(60,90,160,.07);
     cursor:pointer;margin-bottom:10px;width:100%;text-align:left;font-family:inherit}
@@ -1269,7 +1298,7 @@ function viewTdBattle(){
       '<button class="iconbtn" onclick="quitTd()">←</button>' +
       '<div><div class="pht">' + esc(B.map.name) + '</div><div class="phs">' + esc(B.map.no) + '</div></div>' +
     '</div>' +
-    tdHud() +
+    '<div id="tdHudWrap">' + tdHud() + '</div>' +
     '<div class="tdscene">' + tdSceneSVG() + '</div>' +
     '<div id="tdPanel"></div>';
 }
@@ -2002,27 +2031,39 @@ function viewCollect(){
    敌人身上写着一个真实的典型错误，只有对应类型的塔打得动它
    ============================================================ */
 const TD_TOWERS = {
-  word:    { name:'词汇塔', short:'词', color:'#4F6BED', light:'#E8EDFF', range:40, cost:50 },
-  spell:   { name:'拼写塔', short:'拼', color:'#0E9E86', light:'#E2F7F2', range:36, cost:60 },
-  listen:  { name:'听力塔', short:'听', color:'#7B57D9', light:'#F0EBFF', range:44, cost:70 },
-  grammar: { name:'语法塔', short:'法', color:'#D97A28', light:'#FDF0E4', range:38, cost:75 }
+  word:    { name:'词汇塔', short:'词', color:'#4F6BED', light:'#E8EDFF', range:46, cost:50 },
+  spell:   { name:'拼写塔', short:'拼', color:'#0E9E86', light:'#E2F7F2', range:42, cost:60 },
+  listen:  { name:'听力塔', short:'听', color:'#7B57D9', light:'#F0EBFF', range:50, cost:70 },
+  grammar: { name:'语法塔', short:'法', color:'#D97A28', light:'#FDF0E4', range:44, cost:75 }
 };
 const TD_KEYS = ['word','spell','listen','grammar'];
 const TD_UP = { 2:55, 3:80 };
-const TD_KILL_GOLD = 18;
-const TD_WAVE_GOLD = 25;
-const TD_SPEED = 0.030;
+const TD_KILL_GOLD = 20;
+const TD_WAVE_GOLD = 30;
+const TD_SPEED = 0.016;    // 路径比例/秒：全程约 63 秒
+const TD_SLOW = 0.60;      // 被塔锁定时的速度系数：不停，只是被拖慢
+const TD_SLOW_SPELL = 0.40;// 拼写题要点一串字母块，给更多余量，拖得更慢
+const TD_GAP_OK = 0.40;    // 答对后到下一题的间隔
+const TD_GAP_NO = 0.95;    // 答错后的间隔，让正确答案多留一会儿
+const TD_SELL_RATE = 0.5;  // 拆塔返还比例（按累计投入算）
+const TD_SPAWN_GAP = 1.6;  // 同一波内两只怪的出场间隔
 
 const TD_MAPS = [{
   id:'u1-m1', uid:'u1', no:'第 1 战场', name:'初次交锋',
-  gold:130, lives:3,
+  gold:150, lives:3,
   path:[[318,64],[250,64],[250,124],[160,124],[160,64],[58,64]],
-  slots:[[286,96],[286,32],[206,94],[200,148],[110,96],[110,32]],
+  slots:[
+    [288,34],[288,94],
+    [222,94],[222,152],
+    [186,34],
+    [134,94],[134,34],
+    [96,34],[76,94]
+  ],
   waves:[
     { hint:'两只词汇怪，先建一座词汇塔', kinds:['word','word'] },
     { hint:'拼写怪混进来了，词汇塔打不动它', kinds:['word','spell','spell'] },
     { hint:'听力怪出现，会漏听的那种', kinds:['listen','word','spell','listen'] },
-    { hint:'语法怪成群冲锋，守住城堡', kinds:['grammar','grammar','spell','grammar','listen'] }
+    { hint:'四种错误混着来，该拆塔换位了', kinds:['grammar','spell','grammar','listen'] }
   ]
 }];
 
@@ -2095,10 +2136,10 @@ function tdStart(mapId){
   B = {
     map: map, unit: u, info: tdPathInfo(map.path),
     gold: map.gold, lives: map.lives,
-    waveIdx: 0, phase: 'build', paused: true,
+    waveIdx: 0, phase: 'build',
     towers: {}, enemies: [], els: {}, enext: 1,
     quiz: null, quizE: null, quizSlot: -1, answered: false, spell: [],
-    queue: [], spawnT: 0, sel: null,
+    queue: [], spawnT: 0, sel: null, aim: null, gap: 0, panelMode: '',
     stats: { q:0, ok:0 }, last: 0, loopId: 0
   };
   view = { name:'tdBattle', mapId: mapId };
@@ -2122,18 +2163,19 @@ function quitTd(){
   render();
 }
 
-/* --- 帧循环 --- */
+/* --- 帧循环：战斗永不暂停，只有布防阶段才停推进 --- */
 function tdFrame(ts){
   if (!B.last) B.last = ts;
   const dt = Math.min((ts - B.last) / 1000, 0.06);
   B.last = ts;
 
-  for (const k in B.towers){
-    if (B.towers[k] && B.towers[k].cd > 0) B.towers[k].cd -= dt;
-  }
-  B.enemies.forEach(function(e){ if (e.dead) e.deadT = (e.deadT || 0) + dt; });
+  B.enemies.forEach(function(e){
+    if (e.dead){ e.deadT = (e.deadT || 0) + dt; return; }
+    if (e.cool > 0) e.cool = Math.max(0, e.cool - dt);
+  });
+  if (B.gap > 0) B.gap = Math.max(0, B.gap - dt);
 
-  if (B.phase === 'fight' && !B.paused){
+  if (B.phase === 'fight'){
     if (B.queue.length){
       B.spawnT -= dt;
       if (B.spawnT <= 0){
@@ -2145,11 +2187,17 @@ function tdFrame(ts){
     let alive = 0;
     B.enemies.forEach(function(e){
       if (e.hp <= 0) return;
-      e.pos += TD_SPEED * dt;
+      // 被塔锁定的敌人会被拖慢，但不会停下 —— 战场始终在动
+      let sp = 1;
+      if (B.aim && B.aim.e === e){
+        sp = (B.quiz && B.quiz.type === 'spell') ? TD_SLOW_SPELL : TD_SLOW;
+      }
+      e.pos += TD_SPEED * dt * sp;
       if (e.pos >= 1){
         e.pos = 1; e.hp = 0; e.escaped = true;
         B.lives--;
         sfxNo();
+        if (B.aim && B.aim.e === e) tdDropAim();
         if (B.lives <= 0) tdEnd('lose');
       } else alive++;
     });
@@ -2168,44 +2216,97 @@ function tdFrame(ts){
   }
 
   tdPaint();
+  tdHudSync();
 }
 
 function tdSpawn(n){
   const q = tdPickQuiz(n.kind, B.unit);
   B.enemies.push({
     id: B.enext++, kind: n.kind, hp: n.hp || 1, maxHp: n.hp || 1,
-    pos: 0, q: q, badge: tdBadge(q), tried: {}
+    pos: 0, q: q, badge: tdBadge(q), tried: {}, cool: 0
   });
 }
 
+/* 挑一个"最靠前、且有同类型塔够得着"的敌人出题；没有就静候 */
 function tdEngage(){
+  if (!B || B.phase !== 'fight') return;
+  if (B.quiz){
+    if (!B.quizE || B.quizE.hp <= 0 || B.quizE.dead) tdDropAim();
+    return;
+  }
+  if (B.gap > 0) return;
+
+  let best = null, bestSlot = -1;
   for (let k = 0; k < B.enemies.length; k++){
     const e = B.enemies[k];
-    if (e.hp <= 0 || e.dead) continue;
+    if (e.hp <= 0 || e.dead || e.cool > 0) continue;
     const p = tdPointAt(B.info, e.pos);
+    let slot = -1;
     for (let i = 0; i < B.map.slots.length; i++){
       const t = B.towers[i];
-      if (!t || t.kind !== e.kind || t.cd > 0 || e.tried[i]) continue;
+      if (!t || t.kind !== e.kind || e.tried[i]) continue;
       if (tdDist(p, B.map.slots[i]) > TD_TOWERS[t.kind].range) continue;
-      e.tried[i] = true;
-      tdAsk(e, i);
-      return;
+      slot = i; break;
     }
+    if (slot < 0) continue;
+    if (!best || e.pos > best.pos){ best = e; bestSlot = slot; }
   }
+
+  if (!best){
+    if (B.panelMode !== 'wait'){ B.panelMode = 'wait'; B.aim = null; tdPanel(); }
+    return;
+  }
+  tdAsk(best, bestSlot);
 }
 
 function tdAsk(e, slot){
-  B.paused = true;
   B.quiz = e.q;
   B.quizE = e;
   B.quizSlot = slot;
   B.answered = false;
   B.spell = [];
   B.sel = null;
+  e.tried[slot] = true;
+  B.aim = { e:e, slot:slot };
+  B.panelMode = 'quiz';
   tdPanel();
   if (e.q.type === 'listen'){
     setTimeout(function(){ if (B && B.quiz === e.q) speakText(e.q.audio); }, 320);
   }
+}
+
+/* 目标中途被打死或溜出射程：撤题，过一小会儿再挑目标，战斗不中断 */
+function tdDropAim(){
+  if (!B || !B.quiz) return;
+  B.quiz = null; B.quizE = null; B.quizSlot = -1; B.spell = [];
+  B.aim = null;
+  B.gap = 0.25;
+  B.panelMode = '';
+  tdPanel();
+}
+
+/* 开火弹道 + 命中波纹 */
+function tdShootFx(from, to, color){
+  const g = document.getElementById('tdFx');
+  if (!g || !from || !to) return;
+  const ns = 'http://www.w3.org/2000/svg';
+  const line = document.createElementNS(ns, 'line');
+  line.setAttribute('x1', from[0]); line.setAttribute('y1', from[1]);
+  line.setAttribute('x2', to[0].toFixed(1)); line.setAttribute('y2', to[1].toFixed(1));
+  line.setAttribute('stroke', color);
+  line.setAttribute('stroke-width', '3');
+  line.setAttribute('stroke-linecap', 'round');
+  line.setAttribute('class', 'tdshot');
+  g.appendChild(line);
+  const ring = document.createElementNS(ns, 'circle');
+  ring.setAttribute('cx', to[0].toFixed(1)); ring.setAttribute('cy', to[1].toFixed(1));
+  ring.setAttribute('r', '11');
+  ring.setAttribute('fill', 'none');
+  ring.setAttribute('stroke', color);
+  ring.setAttribute('stroke-width', '2.4');
+  ring.setAttribute('class', 'tdring');
+  g.appendChild(ring);
+  setTimeout(function(){ line.remove(); ring.remove(); }, 520);
 }
 
 /* --- 答题 --- */
@@ -2254,6 +2355,8 @@ function tdResolve(ok){
   if (ok){
     B.stats.ok++;
     sfxOk();
+    const cfg = TD_TOWERS[q.type === 'choice' ? 'word' : q.type] || TD_TOWERS.word;
+    tdShootFx(B.map.slots[si], e ? tdPointAt(B.info, e.pos) : null, cfg.color);
     if (e){
       e.hp--;
       const el = B.els['e' + e.id];
@@ -2263,13 +2366,13 @@ function tdResolve(ok){
         B.gold += TD_KILL_GOLD;
         sfxStar();
         if (el){
-          if (tb){ tb.textContent = tdClip(e.badge.good, 9); tb.setAttribute('fill', '#12734e'); }
+          if (tb){ tb.textContent = tdClip(e.badge.good, 7); tb.setAttribute('fill', '#12734e'); }
           const cir = el.querySelector('circle');
           if (cir) cir.setAttribute('stroke', '#25b07a');
-          setTimeout(function(){ el.style.opacity = '0'; }, 430);
+          setTimeout(function(){ el.style.opacity = '0'; }, 520);
         }
       } else if (tb){
-        tb.textContent = tdClip(e.badge.good, 9);
+        tb.textContent = tdClip(e.badge.good, 7);
         tb.setAttribute('fill', '#12734e');
       }
     }
@@ -2277,12 +2380,22 @@ function tdResolve(ok){
   } else {
     sfxNo();
     addWrong(q);
-    if (B.towers[si]) B.towers[si].cd = 5;
+    // 答错 = 这一枪被挡下：换一个错误继续冲，稍后可再打
+    if (e){
+      e.q = tdPickQuiz(e.kind, B.unit);
+      e.badge = tdBadge(e.q);
+      e.tried = {};
+      e.cool = 0.7;
+      const el = B.els['e' + e.id];
+      const tb = el ? el.querySelector('.tbadge') : null;
+      if (tb) tb.textContent = tdClip(e.badge.bad, 7);
+    }
   }
   B.quiz = null; B.quizE = null; B.quizSlot = -1; B.spell = [];
-  B.paused = false;
-  B.last = 0;
-  tdPanel();
+  B.aim = null;
+  B.panelMode = '';
+  B.gap = ok ? TD_GAP_OK : TD_GAP_NO;   // 不暂停，只隔一小会儿自动接下一题
+  // 故意不重绘面板：让「正确答案高亮」留到下一道题出现时才被替换
 }
 
 /* --- 波次 --- */
@@ -2291,16 +2404,17 @@ function tdNextWave(){
   const w = B.map.waves[B.waveIdx];
   if (!w) return;
   sfxTap();
-  B.queue = w.kinds.map(function(k, i){ return { kind:k, hp:1, delay: i === 0 ? 0 : 1.15 }; });
+  B.queue = w.kinds.map(function(k, i){ return { kind:k, hp:1, delay: i === 0 ? 0 : TD_SPAWN_GAP }; });
   B.spawnT = 0.2;
   B.phase = 'fight';
-  B.paused = false;
+  B.gap = 0;
   B.last = 0;
   tdPanel();
 }
 function tdWaveClear(){
   B.phase = 'build';
-  B.paused = true;
+  B.quiz = null; B.quizE = null; B.quizSlot = -1; B.spell = [];
+  B.aim = null; B.gap = 0; B.panelMode = '';
   B.gold += TD_WAVE_GOLD;
   if (B.waveIdx + 1 >= B.map.waves.length){
     tdEnd('win');
@@ -2313,7 +2427,8 @@ function tdWaveClear(){
 function tdEnd(kind){
   if (!B) return;
   B.phase = kind;
-  B.paused = true;
+  B.aim = null; B.gap = 0;
+  B.quiz = null; B.quizE = null; B.quizSlot = -1; B.spell = [];
   if (kind === 'win'){
     sfxWin();
     S.td = S.td || {};
@@ -2325,15 +2440,16 @@ function tdEnd(kind){
   tdPanel();
 }
 
-/* --- 建塔 / 升级 --- */
+/* --- 建塔 / 升级 / 拆塔 --- */
+/* 战斗中同样可以操作：战斗中禁用会毁掉"边打边补"的节奏 */
 function tdTapSlot(i){
-  if (!B || B.towers[i] || B.quiz) return;
+  if (!B || B.towers[i]) return;
   sfxTap();
   B.sel = { type:'build', slot:i };
   tdPanel();
 }
 function tdTapTower(i){
-  if (!B || !B.towers[i] || B.quiz) return;
+  if (!B || !B.towers[i]) return;
   sfxTap();
   B.sel = { type:'tower', slot:i };
   tdPanel();
@@ -2348,9 +2464,9 @@ function tdBuild(i, kind){
   const cfg = TD_TOWERS[kind];
   if (B.gold < cfg.cost) return;
   B.gold -= cfg.cost;
-  B.towers[B.sel.slot] = { kind:kind, lv:1, cd:0 };
+  B.towers[B.sel.slot] = { kind:kind, lv:1, invested:cfg.cost };
   const hole = document.getElementById('tdslot' + B.sel.slot);
-  if (hole) hole.remove();
+  if (hole) hole.style.display = 'none';
   B.sel = null;
   sfxStar();
   tdPaint();
@@ -2364,17 +2480,59 @@ function tdUpgrade(i){
   if (B.gold < cost) return;
   B.gold -= cost;
   t.lv++;
+  t.invested = (t.invested || TD_TOWERS[t.kind].cost) + cost;
   sfxStar();
   tdPanel();
+}
+/* 拆塔：按累计投入的 50% 返还，空位立刻恢复可用 */
+function tdSell(i){
+  if (!B || !B.towers[i]) return;
+  const t = B.towers[i];
+  const back = Math.floor((t.invested || TD_TOWERS[t.kind].cost) * TD_SELL_RATE);
+  B.gold += back;
+  delete B.towers[i];
+  const el = B.els['t' + i];
+  if (el){ el.remove(); delete B.els['t' + i]; }
+  const hole = document.getElementById('tdslot' + i);
+  if (hole) hole.style.display = '';
+  if (B.aim && B.aim.slot === i) tdDropAim();
+  B.sel = null;
+  sfxTap();
+  tdPaint();
+  tdPanel();
+  tdToast('拆除完成 · 返还 ' + back + ' 金币');
 }
 
 /* --- 渲染 --- */
 function tdHud(){
   return '<div class="tdhud">' +
-    '<b><em>金币</em>' + B.gold + '</b>' +
-    '<b class="life"><em>生命</em>' + B.lives + '</b>' +
+    '<b class="gold" id="tdHudGold"><em>金币</em>' + Math.floor(B.gold) + '</b>' +
+    '<b class="life" id="tdHudLife"><em>生命</em>' + B.lives + '</b>' +
     '<b class="wave"><em>波次</em>' + Math.min(B.waveIdx + 1, B.map.waves.length) + '/' + B.map.waves.length + '</b>' +
   '</div>';
+}
+/* 金币和生命是逐帧变的，HUD 得跟着刷新，不然孩子看不到钱涨 */
+function tdHudSync(){
+  if (!B) return;
+  const wrap = document.getElementById('tdHudWrap');
+  if (!wrap) return;
+  const gold = Math.floor(B.gold);
+  const key = gold + '|' + B.lives + '|' + B.waveIdx;
+  if (B._hudKey === key) return;
+  const goldUp = B._hudGold != null && gold > B._hudGold;
+  const lifeDown = B._hudLife != null && B.lives < B._hudLife;
+  B._hudGold = gold;
+  B._hudLife = B.lives;
+  B._hudKey = key;
+  wrap.innerHTML = tdHud();
+  if (goldUp){
+    const g = document.getElementById('tdHudGold');
+    if (g){ g.classList.add('up'); setTimeout(function(){ g.classList.remove('up'); }, 640); }
+  }
+  if (lifeDown){
+    const l = document.getElementById('tdHudLife');
+    if (l){ l.classList.add('hurt'); setTimeout(function(){ l.classList.remove('hurt'); }, 640); }
+  }
 }
 function tdCastle(){
   return '<g>' +
@@ -2392,8 +2550,9 @@ function tdSceneSVG(){
   const d = 'M' + m.path.map(function(p){ return p[0] + ' ' + p[1]; }).join(' L ');
   let slots = '';
   m.slots.forEach(function(s, i){
-    if (B.towers[i]) return;
-    slots += '<g id="tdslot' + i + '" onclick="tdTapSlot(' + i + ')">' +
+    const used = !!B.towers[i];
+    slots += '<g id="tdslot' + i + '"' + (used ? ' style="display:none"' : '') +
+        ' onclick="tdTapSlot(' + i + ')">' +
       '<circle class="tdslot" cx="' + s[0] + '" cy="' + s[1] + '" r="12" fill="#fff" ' +
         'stroke="#c3d1f0" stroke-width="1.4" stroke-dasharray="3 3"/>' +
       '<text x="' + s[0] + '" y="' + (s[1] + 3.6) + '" text-anchor="middle" font-size="11" ' +
@@ -2405,8 +2564,13 @@ function tdSceneSVG(){
     '<path d="' + d + '" fill="none" stroke="#e6dcc6" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>' +
     '<path d="' + d + '" fill="none" stroke="#f6f1e4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>' +
     '<path d="' + d + '" fill="none" stroke="#ded2b6" stroke-width="1" stroke-dasharray="4 7"/>' +
+    '<circle id="tdRangeC" r="0" fill="none" stroke="#7f95cc" stroke-width="1.2" ' +
+      'stroke-dasharray="4 4" opacity="0" pointer-events="none"/>' +
     tdCastle() + slots +
-    '<g id="tdTowers"></g><g id="tdEnemies"></g>' +
+    '<g id="tdTowers"></g>' +
+    '<g id="tdEnemies"></g>' +
+    '<g id="tdLock" opacity="0"></g>' +
+    '<g id="tdFx"></g>' +
   '</svg>';
 }
 function tdPaint(){
@@ -2415,24 +2579,70 @@ function tdPaint(){
   const eg = document.getElementById('tdEnemies');
   if (!tg || !eg) return;
 
+  /* 锁定环：被瞄准的怪身上套一圈流动虚线，远近都看得清 */
+  const lock = document.getElementById('tdLock');
+  if (lock){
+    if (B.aim && B.aim.e && B.aim.e.hp > 0 && B.aim.e.pos < 1){
+      const b = tdPointAt(B.info, B.aim.e.pos);
+      const tw = B.towers[B.aim.slot];
+      const col = tw ? TD_TOWERS[tw.kind].color : '#5f76b0';
+      if (!lock.firstChild){
+        lock.innerHTML = '<circle class="tdlock" r="15.5" fill="none" stroke-width="2.2" ' +
+          'stroke-dasharray="7 6" stroke-linecap="round"/>';
+      }
+      const c = lock.firstChild;
+      c.setAttribute('stroke', col);
+      lock.setAttribute('transform', 'translate(' + b[0].toFixed(1) + ' ' + b[1].toFixed(1) + ')');
+      lock.setAttribute('opacity', '1');
+    } else {
+      lock.setAttribute('opacity', '0');
+    }
+  }
+
+  /* 射程圈：点开塔或空位时，直接看到它能管多远 */
+  const rc = document.getElementById('tdRangeC');
+  if (rc){
+    let rr = 0, cx = 0, cy = 0;
+    if (B.sel && B.towers[B.sel.slot]){
+      const s = B.map.slots[B.sel.slot];
+      cx = s[0]; cy = s[1];
+      rr = TD_TOWERS[B.towers[B.sel.slot].kind].range;
+    } else if (B.sel && B.sel.type === 'build'){
+      const s = B.map.slots[B.sel.slot];
+      cx = s[0]; cy = s[1];
+      rr = 42;
+    }
+    if (rr > 0){
+      rc.setAttribute('cx', cx);
+      rc.setAttribute('cy', cy);
+      rc.setAttribute('r', rr);
+      rc.setAttribute('opacity', '0.9');
+    } else rc.setAttribute('opacity', '0');
+  }
+
   for (const k in B.towers){
     const i = +k, t = B.towers[i];
     let el = B.els['t' + i];
+    if (el && el.getAttribute('data-lv') !== String(t.lv)){
+      el.remove(); delete B.els['t' + i]; el = null;   // 升级了，重画等级徽章
+    }
     if (!el){
       const cfg = TD_TOWERS[t.kind];
       const s = B.map.slots[i];
       el = document.createElementNS('http://www.w3.org/2000/svg','g');
       el.setAttribute('class','tdtower');
+      el.setAttribute('data-lv', String(t.lv));
       el.setAttribute('transform','translate(' + s[0] + ' ' + s[1] + ')');
       el.setAttribute('onclick','tdTapTower(' + i + ')');
-      el.innerHTML = '<rect x="-12" y="-12" width="24" height="24" rx="8" fill="' + cfg.color + '"/>' +
-        '<text y="4" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">' + cfg.short + '</text>' +
-        '<text class="tlv" y="-16" text-anchor="middle" font-size="8" font-weight="700" fill="' + cfg.color + '">Lv' + t.lv + '</text>';
+      let inner = '<rect x="-12" y="-12" width="24" height="24" rx="8" fill="' + cfg.color + '"/>' +
+        '<text y="4.2" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">' + cfg.short + '</text>';
+      if (t.lv > 1){
+        inner += '<circle cx="11" cy="-11" r="4.4" fill="#fff" stroke="' + cfg.color + '" stroke-width="1.1"/>' +
+          '<text x="11" y="-8.4" text-anchor="middle" font-size="6" font-weight="800" fill="' + cfg.color + '">' + t.lv + '</text>';
+      }
+      el.innerHTML = inner;
       tg.appendChild(el);
       B.els['t' + i] = el;
-    } else {
-      const lv = el.querySelector('.tlv');
-      if (lv) lv.textContent = 'Lv' + t.lv;
     }
   }
 
@@ -2449,9 +2659,9 @@ function tdPaint(){
         '<circle cx="-4" cy="-4" r="1.7" fill="' + cfg.color + '"/>' +
         '<circle cx="4" cy="-4" r="1.7" fill="' + cfg.color + '"/>' +
         '<path d="M-4 1.5 Q0 5.5 4 1.5" fill="none" stroke="' + cfg.color + '" stroke-width="1.4" stroke-linecap="round"/>' +
-        '<text class="tbadge" y="-15" text-anchor="middle" font-size="9.5" font-weight="700" ' +
-          'fill="#42506e" stroke="#eef4ff" stroke-width="3" paint-order="stroke">' +
-          esc(tdClip(e.badge.bad, 9)) + '</text>';
+        '<text class="tbadge" y="-15.5" text-anchor="middle" font-size="8.6" font-weight="700" ' +
+          'fill="#42506e" stroke="#eef4ff" stroke-width="3.4" paint-order="stroke">' +
+          esc(tdClip(e.badge.bad, 7)) + '</text>';
       eg.appendChild(el);
       B.els['e' + e.id] = el;
     }
@@ -2467,16 +2677,21 @@ function tdPanel(){
 }
 function tdPanelHTML(){
   if (!B) return '';
-  if (B.quiz) return tdQuizHTML();
-
   if (B.phase === 'win') return tdEndHTML(true);
   if (B.phase === 'lose') return tdEndHTML(false);
 
-  if (B.sel && B.sel.type === 'build') return tdBuildHTML();
-  if (B.sel && B.sel.type === 'tower') return tdTowerHTML(B.sel.slot);
+  let s = '';
+  // 战斗中题目常驻，不随塔的操作消失
+  if (B.phase === 'fight') s += (B.quiz ? tdQuizHTML() : tdWaitHTML());
 
+  if (B.sel && B.sel.type === 'build') s += tdBuildHTML();
+  else if (B.sel && B.sel.type === 'tower') s += tdTowerHTML(B.sel.slot);
+  else if (B.phase === 'build') s += tdBuildReadyHTML();
+  return s;
+}
+/* 布防阶段：看下一波是什么，决定建哪种塔 */
+function tdBuildReadyHTML(){
   const w = B.map.waves[B.waveIdx];
-  const left = B.gold;
   let legend = '';
   TD_KEYS.forEach(function(k){
     const c = TD_TOWERS[k];
@@ -2484,10 +2699,35 @@ function tdPanelHTML(){
   });
   return '<div class="tdpanel">' +
     '<h3>' + (w ? '第 ' + (B.waveIdx + 1) + ' 波 · 布防' : '布防') + '</h3>' +
-    '<div class="tp-sub">' + (w ? '下一波：' + esc(w.hint) : '') + '　金币 ' + left + '</div>' +
+    '<div class="tp-sub">' + (w ? '下一波：' + esc(w.hint) : '') + '　金币 ' + B.gold + '</div>' +
     '<div class="tdlegend">' + legend + '</div>' +
-    '<div class="tp-sub">点战场上的虚线圆圈建塔。只有同类型的塔才能伤到那种颜色的怪。</div>' +
+    '<div class="tp-sub">点战场上的虚线圆圈建塔。只有同类型的塔才打得动那种颜色的怪；' +
+      '塔随时能拆掉换位置，返还一半金币。</div>' +
     (w ? '<button class="tdgo" onclick="tdNextWave()">开始第 ' + (B.waveIdx + 1) + ' 波</button>' : '') +
+  '</div>';
+}
+/* 战斗中暂无题可出：说清楚在等什么 */
+function tdWaitHTML(){
+  let tip = '敌人走进塔的射程，题目会自动出现。';
+  const alive = B.enemies.filter(function(e){ return e.hp > 0 && !e.dead; });
+  if (!alive.length){
+    tip = '场上暂时没有敌人。';
+  } else {
+    const kinds = {};
+    alive.forEach(function(e){ kinds[e.kind] = 1; });
+    const missing = TD_KEYS.filter(function(k){
+      if (!kinds[k]) return false;
+      for (const i in B.towers){ if (B.towers[i].kind === k) return false; }
+      return true;
+    });
+    if (missing.length){
+      tip = '场上出现了' + missing.map(function(k){ return TD_TOWERS[k].name.replace('塔',''); }).join('、') +
+        '怪，但没有对应的塔拦得住它。';
+    }
+  }
+  return '<div class="tdpanel tdwait">' +    '<div class="tdwait-row"><span class="dot"></span>战斗进行中</div>' +
+    '<div class="tp-sub">' + esc(tip) + '</div>' +
+    '<div class="tp-sub" style="margin-bottom:0">战斗中也能点虚线圆圈补塔，或点已有的塔拆掉换位置。</div>' +
   '</div>';
 }
 function tdBuildHTML(){
@@ -2513,13 +2753,19 @@ function tdTowerHTML(i){
   const c = TD_TOWERS[t.kind];
   const cost = TD_UP[t.lv + 1];
   const max = t.lv >= 3;
+  const invested = t.invested || c.cost;
+  const back = Math.floor(invested * TD_SELL_RATE);
   return '<div class="tdpanel">' +
     '<h3>' + c.name + ' · Lv' + t.lv + '</h3>' +
-    '<div class="tp-sub">只打' + c.name.replace('塔','') + '类的怪，射程和伤害随等级提升。</div>' +
+    '<div class="tp-sub">只打' + c.name.replace('塔','') + '类的怪，射程 ' + c.range +
+      '。已投入 ' + invested + ' 金币，拆掉返还 ' + back + '。</div>' +
     (max
-      ? '<button class="tdgo ghost" onclick="tdCancel()">已经是满级</button>'
+      ? '<button class="tdgo ghost" disabled>已经是满级</button>'
       : '<button class="tdgo" onclick="tdUpgrade(' + i + ')">升到 Lv' + (t.lv + 1) + '　' + cost + ' 金币</button>') +
-    '<button class="tdgo ghost" onclick="tdCancel()">返回</button>' +
+    '<div class="tdrow2">' +
+      '<button class="tdgo ghost" onclick="tdCancel()">返回</button>' +
+      '<button class="tdgo sell" onclick="tdSell(' + i + ')">拆掉 · 返 ' + back + '</button>' +
+    '</div>' +
   '</div>';
 }
 function tdQuizHTML(){
@@ -2582,6 +2828,20 @@ function tdSpellLine(){
 }
 function tdReplay(){
   if (B && B.quiz && B.quiz.audio) speakText(B.quiz.audio);
+}
+/* 结算提示条 */
+function tdToast(msg){
+  let t = document.getElementById('tdToast');
+  if (!t){
+    t = document.createElement('div');
+    t.id = 'tdToast';
+    t.className = 'tdtoast';
+    (document.getElementById('app') || document.body).appendChild(t);
+  }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.classList.remove('show'); }, 1600);
 }
 function tdEndHTML(win){
   const acc = B.stats.q ? Math.round(B.stats.ok / B.stats.q * 100) : 0;
