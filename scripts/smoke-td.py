@@ -93,6 +93,7 @@ try {
           }
         }
       });
+      tdSubmitSpell();   // 填满后要手动提交
     } else {
       tdChoose(q.options.indexOf(q.answer));
     }

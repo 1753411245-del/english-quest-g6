@@ -17,6 +17,7 @@ const el = () => ({
 const document = {
   getElementById: el, createElement: el,
   body: { appendChild: noop, removeChild: noop },
+  addEventListener: noop, querySelector: () => null, querySelectorAll: () => [],
 };
 const window = {
   speechSynthesis: { getVoices: () => [], speak: noop, cancel: noop },

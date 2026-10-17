@@ -42,6 +42,7 @@ function answerSpell(q){
       }
     }
   });
+  checkSpell();   // 填满后要手动提交
 }
 try {
   render();

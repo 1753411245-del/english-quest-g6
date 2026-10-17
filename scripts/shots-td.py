@@ -63,6 +63,26 @@ CASES = {
   var sc = document.querySelector('.tdscene');
   sc.style.width = '1180px'; sc.style.maxWidth = 'none';
 ''',
+    # 闯关拼写关：填了两个字母，看得到 × 角标和「删一个 / 检查」
+    'v_spellgame': r'''
+  render(); startLevel('st', 1);
+  var q0 = G.qs[G.i];
+  pickLetter(0); pickLetter(1);
+  updateSpellUI();
+''',
+    # 塔防拼写题：填了两个字母，看得到可点格子 + 删一个 / 提交
+    'v_tdspell': r'''
+  render(); openTd(); tdStart('u1-m1');
+  B.loopId = -999; B.gold = 9999;
+  var u0 = BOOK.units[0];
+  var q1 = makeSpell(u0, u0.words[0]);
+  B.phase = 'fight';
+  B.quiz = q1; B.spell = []; B.answered = false;
+  B.quizE = { id:'t', pos:0.3, hp:2, tried:{}, badge: tdBadge(q1) };
+  B.quizSlot = 0;
+  tdPickLtr(0); tdPickLtr(1);
+  tdPanel(); tdPaint(); tdHudSync();
+''',
 }
 
 # 放大那版要宽窗口，别的一律手机比例

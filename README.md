@@ -191,6 +191,18 @@ python scripts/pace-td.py
 python scripts/smoke-levels.py
 ```
 
+拼写题删改回归（点错字母后能不能改回来——闯关和塔防各走一遍"点字母块 / 点填字框 / 删一个按钮"三条路径）：
+
+```bash
+python scripts/test-spell-edit.py
+```
+
+窄屏布局检查（把容器钉成 375 宽，量所有元素右边界有没有越界）：
+
+```bash
+python scripts/check-narrow.py
+```
+
 完整清单（含脚本查不出、必须人工判断的项）见 [docs/PRE-RELEASE-CHECKLIST.md](docs/PRE-RELEASE-CHECKLIST.md)。
 
 ---
@@ -212,7 +224,9 @@ python scripts/smoke-levels.py
 │   ├── smoke-td.py                # 塔防模式冒烟测试（需要 Edge / Chrome）
 │   ├── pace-td.py                 # 塔防节奏与金币经济压力测试
 │   ├── smoke-levels.py            # 答题闯关 56 关全量回归
-│   └── shots-td.py                # 生成塔防界面截图到 .shots/
+│   ├── test-spell-edit.py         # 拼写题点错后能否删改（闯关 + 塔防）
+│   ├── check-narrow.py            # 375 宽窄屏横向溢出检查
+│   └── shots-td.py                # 生成界面截图到 .shots/
 ├── .github/
 │   └── workflows/
 │       └── pages.yml              # 先跑安全检查，再部署 GitHub Pages（只发布白名单文件）

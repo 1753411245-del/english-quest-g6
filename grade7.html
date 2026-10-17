@@ -251,12 +251,33 @@
   .spellline{min-height:60px;border:2px dashed #c9d6ff;border-radius:16px;padding:9px;display:flex;flex-wrap:wrap;gap:6px;
     margin-top:16px;background:linear-gradient(180deg,#f7f9ff,#fbfcff);align-items:center;justify-content:center;transition:.15s}
   .spellline .ph{color:#b3bdd4;font-size:12.5px;font-weight:700}
-  .spellline .sltr{width:38px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:20px;font-weight:900;
+  .spellline .sltr{position:relative;width:38px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:20px;font-weight:900;
     background:linear-gradient(180deg,#eef3ff,#e2eaff);border:2px solid #b9c9ff;color:#2f45a8;cursor:pointer;
-    box-shadow:0 3px 8px rgba(79,107,237,.14);animation:pop .18s}
+    box-shadow:0 3px 8px rgba(79,107,237,.14);animation:pop .18s;transition:.14s}
+  /* 已填字母右上角默认挂个淡淡的 ×，一眼就知道能删；指上去变红放大 */
+  .spellline .sltr::after{content:'×';position:absolute;top:-4px;right:-4px;width:14px;height:14px;border-radius:50%;
+    background:#f2545b;color:#fff;font-size:11px;font-weight:900;line-height:14px;text-align:center;
+    opacity:.5;transform:scale(.9);transition:.14s;box-shadow:0 1px 3px rgba(0,0,0,.16)}
+  .spellline .sltr:hover{background:linear-gradient(180deg,#fdeef0,#fbe1e4);
+    border-color:#f2a2a6;color:#c2373f;box-shadow:0 3px 10px rgba(242,84,91,.22)}
+  .spellline .sltr:hover::after{opacity:1;transform:scale(1.08)}
   .spellline.ok{border-color:#20b878;border-style:solid;background:linear-gradient(180deg,#eafbf3,#f4fdf9)}
-  .spellline.ok .sltr{background:linear-gradient(180deg,#d8f7e8,#c3f0da);border-color:#7fdcb4;color:#0f7c50}
+  .spellline.ok .sltr{background:linear-gradient(180deg,#d8f7e8,#c3f0da);border-color:#7fdcb4;color:#0f7c50;cursor:default}
+  .spellline.ok .sltr:hover{background:linear-gradient(180deg,#d8f7e8,#c3f0da);border-color:#7fdcb4;color:#0f7c50;box-shadow:0 3px 8px rgba(79,107,237,.14)}
   .spellline.bad{border-color:#f2545b;border-style:solid;background:linear-gradient(180deg,#fdf0f0,#fef8f8)}
+  .spellline.bad .sltr{cursor:default}
+  .spellline.ok .sltr::after,.spellline.bad .sltr::after{display:none}
+  .spellops{display:flex;gap:10px;justify-content:center;margin-top:11px}
+  .spellbtn{display:inline-flex;align-items:center;gap:5px;height:38px;padding:0 17px;border-radius:12px;border:2px solid #dde5f8;
+    background:linear-gradient(180deg,#fff,#f6f8ff);color:#5c6b8f;font-family:inherit;font-size:14px;font-weight:800;
+    cursor:pointer;line-height:1;transition:.12s}
+  .spellbtn:hover:not(:disabled){border-color:#b9c9ff;color:#2f45a8;transform:translateY(-1px)}
+  .spellbtn:active:not(:disabled){transform:translateY(0) scale(.97)}
+  .spellbtn:disabled{opacity:.34;cursor:default}
+  .spellbtn.go{border-color:#8fdcb2;background:linear-gradient(180deg,#eafbf2,#d6f6e6);color:#0f7c50}
+  .spellbtn.go:not(:disabled){animation:spellGo 1.6s ease-in-out infinite}
+  .spellbtn.go:hover:not(:disabled){border-color:#20b878;color:#0a6440}
+  @keyframes spellGo{0%,100%{box-shadow:0 0 0 0 rgba(32,184,120,.34)}50%{box-shadow:0 0 0 9px rgba(32,184,120,0)}}
   .spellhint{text-align:center;font-size:11.5px;color:#93a0bb;font-weight:700;margin-top:9px;line-height:1.5}
   .letters{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-top:14px}
   .ltr{width:46px;height:50px;border-radius:13px;border:2px solid #dde5f8;background:#fff;color:var(--ink);
@@ -264,7 +285,10 @@
     box-shadow:0 3px 10px rgba(35,60,130,.07);transition:.12s}
   .ltr:hover{border-color:#b9c9ff;transform:translateY(-2px);box-shadow:0 8px 16px rgba(79,107,237,.18)}
   .ltr:active{transform:translateY(0) scale(.96)}
-  .ltr.used{opacity:.22;cursor:default;transform:none;box-shadow:none;border-style:dashed}
+  /* 已用过的字母块还能点，点一下就撤销，不用绕回去点填字框 */
+  .ltr.used{opacity:.34;cursor:pointer;transform:none;box-shadow:none;border-style:dashed;background:#f6f8ff}
+  .ltr.used:hover{opacity:.8;border-color:#f2a2a6;border-style:dashed;transform:none;
+    box-shadow:none;color:#c2373f;background:#fdeef0}
 
   /* ---------- 语法关 ---------- */
   .gtag{display:inline-flex;align-self:flex-start;align-items:center;font-size:11px;font-weight:900;letter-spacing:.3px;
@@ -338,6 +362,7 @@
     .path{grid-template-columns:repeat(4,1fr);gap:18px 2px}
     .ltr{width:40px;height:44px;font-size:18px;border-radius:11px}
     .spellline .sltr{width:32px;height:38px;font-size:17px}
+    .spellbtn{height:36px;padding:0 14px;font-size:13px}
     .nlabel{font-size:10px}
     .bigstars span{font-size:40px}
     .brand .sub{display:none}
@@ -429,12 +454,25 @@
   .tdltr{width:40px;height:44px;border-radius:9px;border:1.5px solid #d3bb92;
     background:linear-gradient(#fffdf5,#f3e6cb);font-size:18px;font-weight:800;color:#3a2b16;
     cursor:pointer;font-family:inherit;box-shadow:0 2px 0 rgba(150,120,70,.2)}
-  .tdltr.used{opacity:.2;pointer-events:none}
+  .tdltr.used{opacity:.28;cursor:pointer;border-style:dashed;background:#efe5cf}
+  .tdltr.used:active{transform:none;box-shadow:none}
   .tdltr:active{transform:translateY(2px);box-shadow:none}
   .tdline{min-height:50px;border-bottom:2.5px dashed #dbc7a0;display:flex;gap:5px;
-    align-items:center;justify-content:center;margin-bottom:12px;padding-bottom:6px}
+    align-items:center;justify-content:center;margin-bottom:10px;padding-bottom:6px}
   .tdline .sl{width:30px;height:36px;border-radius:8px;background:#f2e5c8;border:1px solid #dfcaa2;
     display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#3a2b16}
+  .tdline .sl.full{cursor:pointer;transition:.12s}
+  .tdline .sl.full:hover{background:#f7ded2;border-color:#c4644a;color:#a33a22;transform:translateY(-1px)}
+  .tdedit{display:flex;gap:7px;justify-content:center;margin:-4px 0 11px}
+  .tdedit button{height:30px;padding:0 13px;border-radius:8px;border:1.5px solid #d3bb92;
+    background:linear-gradient(#fffdf5,#f3e6cb);color:#5b4526;font-family:inherit;font-size:12.5px;font-weight:800;
+    cursor:pointer;line-height:1;transition:.12s}
+  .tdedit button:hover:not(:disabled){border-color:#b8996a;background:linear-gradient(#fff,#f7ecd6)}
+  .tdedit button:active:not(:disabled){transform:translateY(1px)}
+  .tdedit button:disabled{opacity:.34;cursor:default}
+  .tdedit button.ok{border-color:#7fae7f;background:linear-gradient(#f2fbf0,#e0f3dc);color:#2f6b40}
+  .tdedit button.ok:not(:disabled){animation:tdGoPulse 1.6s ease-in-out infinite}
+  @keyframes tdGoPulse{0%,100%{box-shadow:0 0 0 0 rgba(70,140,80,.32)}50%{box-shadow:0 0 0 7px rgba(70,140,80,0)}}
   .tdresult{text-align:center;padding:6px 0 2px}
   .tdresult .big{font-size:23px;font-weight:800;margin-bottom:6px;letter-spacing:.5px;
     font-family:Georgia,'Times New Roman','Songti SC','SimSun',serif}
@@ -1582,11 +1620,16 @@ function renderSpell(q){
   }).join('');
   return '' +
   '<div class="qprompt small">中文：' + esc(q.cn) + '</div>' +
-  '<div class="qsub">按顺序点字母，拼出这个单词</div>' +
+  '<div class="qsub">按顺序点字母拼单词 · 点错了点一下它就能撤掉</div>' +
   '<div class="spellline" id="spellline"></div>' +
+  '<div class="spellops">' +
+    '<button class="spellbtn" id="spBack" onclick="spellBack()">⌫ 删一个</button>' +
+    '<button class="spellbtn go" id="spCheck" onclick="checkSpell()">检查</button>' +
+  '</div>' +
   '<div class="spellhint" id="spellhint">提示：' + esc(q.hint) + '</div>' +
   '<div class="letters" id="letters">' + ltrs + '</div>';
 }
+function spellNeed(q){ return q.answer.replace(/[^a-zA-Z]/g,'').length; }
 function updateSpellUI(){
   if (!G) return;
   const q = G.qs[G.i];
@@ -1594,7 +1637,7 @@ function updateSpellUI(){
   if (line){
     line.innerHTML = G.spellPicked.length
       ? G.spellPicked.map(function(idx,pos){
-          return '<span class="sltr" onclick="unpickLetter(' + pos + ')">' + esc(q.letters[idx]) + '</span>';
+          return '<span class="sltr" onclick="unpickLetter(' + pos + ')" title="点一下删掉这个字母">' + esc(q.letters[idx]) + '</span>';
         }).join('')
       : '<span class="ph">点下面的字母开始拼</span>';
   }
@@ -1602,25 +1645,40 @@ function updateSpellUI(){
     const el = document.getElementById('lt' + i);
     if (el) el.classList.toggle('used', G.spellPicked.indexOf(i) >= 0);
   });
+  const back = document.getElementById('spBack');
+  const chk = document.getElementById('spCheck');
+  if (back) back.disabled = !G.spellPicked.length || !!G.answered;
+  if (chk){
+    chk.disabled = G.spellPicked.length < spellNeed(q) || !!G.answered;
+    chk.textContent = '检查';
+  }
 }
 function pickLetter(i){
   if (!G || G.answered) return;
   const q = G.qs[G.i];
-  if (G.spellPicked.indexOf(i) >= 0) return;
+  /* 再点一次用过的字母块＝撤销，符合「点错了再点回去」的直觉 */
+  const at = G.spellPicked.indexOf(i);
+  if (at >= 0){ unpickLetter(at); return; }
+  if (G.spellPicked.length >= spellNeed(q)) return;   // 填满了先让人检查，不再往下塞
   sfxTap();
   G.spellPicked.push(i);
   updateSpellUI();
-  if (G.spellPicked.length >= q.answer.replace(/[^a-zA-Z]/g,'').length) checkSpell();
 }
 function unpickLetter(pos){
   if (!G || G.answered) return;
+  if (pos == null || pos < 0 || pos >= G.spellPicked.length) return;
   sfxTap();
   G.spellPicked.splice(pos, 1);
   updateSpellUI();
 }
+function spellBack(){
+  if (!G) return;
+  unpickLetter(G.spellPicked.length - 1);
+}
 function checkSpell(){
   if (!G || G.answered) return;
   const q = G.qs[G.i];
+  if (G.spellPicked.length < spellNeed(q)) return;   // 没拼完不判，避免空着按回车
   const built = G.spellPicked.map(function(i){ return q.letters[i]; }).join('');
   const ok = built.toLowerCase() === q.answer.toLowerCase();
 
@@ -1632,6 +1690,7 @@ function checkSpell(){
     const line = document.getElementById('spellline');
     if (line) line.classList.add('ok');
     feedback(true, q);
+    updateSpellUI();
     showNext();
     return;
   }
@@ -1657,9 +1716,25 @@ function checkSpell(){
     const line = document.getElementById('spellline');
     if (line) line.classList.add('bad');
     feedback(false, q);
+    updateSpellUI();
     showNext();
   }
 }
+
+/* --- 键盘：退格删一个、回车检查（只在拼写关生效，PC 上点错不用摸鼠标） --- */
+document.addEventListener('keydown', function(e){
+  if (!G || G.answered) return;
+  if (!document.getElementById('spellline')) return;
+  const q = G.qs && G.qs[G.i];
+  if (!q || q.type !== 'spell') return;
+  if (e.key === 'Backspace'){
+    e.preventDefault();
+    unpickLetter(G.spellPicked.length - 1);
+  } else if (e.key === 'Enter'){
+    e.preventDefault();
+    checkSpell();
+  }
+});
 
 /* --- 语法关 --- */
 function renderGrammar(q){
@@ -2368,13 +2443,31 @@ function tdChoose(i){
 }
 function tdPickLtr(i){
   if (!B || !B.quiz || B.answered) return;
-  if (B.spell.indexOf(i) >= 0) return;
+  /* 再点一次用过的字母块＝撤销它，不用先跑去点格子上那个字母 */
+  const at = B.spell.indexOf(i);
+  if (at >= 0){ tdUnpickLtr(at); return; }
+  if (B.spell.length >= B.quiz.answer.length) return;   // 满了先让人核对，不再往下塞
   sfxTap();
   B.spell.push(i);
   tdSpellLine();
-  if (B.spell.length >= B.quiz.answer.length){
-    setTimeout(function(){ tdCheckSpell(); }, 240);
-  }
+  tdEditSync();
+}
+function tdUnpickLtr(pos){
+  if (!B || !B.quiz || B.answered) return;
+  if (pos == null || pos < 0 || pos >= B.spell.length) return;
+  sfxTap();
+  B.spell.splice(pos, 1);
+  tdSpellLine();
+  tdEditSync();
+}
+function tdBackLtr(){
+  if (!B || !B.spell) return;
+  tdUnpickLtr(B.spell.length - 1);
+}
+function tdSubmitSpell(){
+  if (!B || !B.quiz || B.answered) return;
+  if (B.spell.length < B.quiz.answer.length) return;
+  tdCheckSpell();
 }
 function tdCheckSpell(){
   if (!B || !B.quiz || B.answered) return;
@@ -2382,6 +2475,7 @@ function tdCheckSpell(){
   const built = B.spell.map(function(i){ return q.letters[i]; }).join('');
   B.answered = true;
   const ok = built.toLowerCase() === q.answer.toLowerCase();
+  tdEditSync();
   if (ok) tdResolve(true);
   else {
     sfxNo();
@@ -3020,10 +3114,15 @@ function tdQuizHTML(){
       const used = B.spell.indexOf(i) >= 0;
       ltrs += '<button class="tdltr' + (used ? ' used' : '') + '" onclick="tdPickLtr(' + i + ')">' + esc(ch) + '</button>';
     });
-    body = '<div class="tdline" id="tdLine">' + tdSpellSlots() + '</div>' +
-      '<div class="tdspell">' + ltrs + '</div>';
+    const full = B.spell.length >= q.answer.length;
     body = '<div class="tdqprompt">' + esc(q.cn) + '</div>' +
-      '<div class="tdqcn">' + esc(q.hint || '') + '</div>' + body;
+      '<div class="tdqcn">' + esc(q.hint || '') + '　·　点错了点格子上的字母就能撤</div>' +
+      '<div class="tdline" id="tdLine">' + tdSpellSlots() + '</div>' +
+      '<div class="tdedit">' +
+        '<button id="tdBack" onclick="tdBackLtr()"' + (B.spell.length ? '' : ' disabled') + '>⌫ 删一个</button>' +
+        '<button class="ok" id="tdSubmit" onclick="tdSubmitSpell()"' + (full ? '' : ' disabled') + '>✓ 提交</button>' +
+      '</div>' +
+      '<div class="tdspell">' + ltrs + '</div>';
   } else if (q.type === 'listen'){
     tag = '听力塔 · 听力';
     body = '<div class="tdqprompt">' + esc(q.prompt) + '</div>' +
@@ -3058,13 +3157,23 @@ function tdSpellSlots(){
   let s = '';
   for (let i = 0; i < q.answer.length; i++){
     const idx = B.spell[i];
-    s += '<span class="sl">' + (idx == null ? '' : esc(q.letters[idx])) + '</span>';
+    s += idx == null
+      ? '<span class="sl"></span>'
+      : '<span class="sl full" onclick="tdUnpickLtr(' + i + ')" title="点一下撤掉这个字母">' + esc(q.letters[idx]) + '</span>';
   }
   return s;
 }
 function tdSpellLine(){
   const line = document.getElementById('tdLine');
   if (line) line.innerHTML = tdSpellSlots();
+}
+/* 拼写题的「删一个 / 提交」按钮跟着当前拼到哪同步，不然会点了没反应 */
+function tdEditSync(){
+  if (!B || !B.quiz) return;
+  const back = document.getElementById('tdBack');
+  const sub = document.getElementById('tdSubmit');
+  if (back) back.disabled = !B.spell.length || !!B.answered;
+  if (sub) sub.disabled = B.spell.length < B.quiz.answer.length || !!B.answered;
 }
 function tdReplay(){
   if (B && B.quiz && B.quiz.audio) speakText(B.quiz.audio);
