@@ -47,7 +47,26 @@ CASES = {
   B.loopId = -999;
   tdPanel(); tdPaint(); tdHudSync();
 ''',
+    # 放大版战场：改美术时用它看细节（三座城垛、弓形旗、铁闸门）
+    'v_tdzoom': SETUP + r'''
+  B.towers[2].lv = 2; B.towers[5].lv = 3;
+  B.sel = null; B.phase = 'fight';
+  tdSpawn({ kind:'word', hp:1 });    B.enemies[0].pos = 0.05;
+  tdSpawn({ kind:'spell', hp:1 });   B.enemies[1].pos = 0.28;
+  tdSpawn({ kind:'listen', hp:1 });  B.enemies[2].pos = 0.44;
+  tdSpawn({ kind:'grammar', hp:1 }); B.enemies[3].pos = 0.60;
+  B.last = 0;
+  tdAsk(B.enemies[0], 0);
+  tdPaint(); tdHudSync();
+  document.getElementById('app').style.maxWidth = 'none';
+  document.querySelector('.view').style.maxWidth = 'none';
+  var sc = document.querySelector('.tdscene');
+  sc.style.width = '1180px'; sc.style.maxWidth = 'none';
+''',
 }
+
+# 放大那版要宽窗口，别的一律手机比例
+SIZES = {'v_tdzoom': (1240, 700)}
 
 
 def pick_browser():
@@ -70,10 +89,11 @@ def main():
         io.open(path, 'w', encoding='utf-8').write(
             html[:m.start()] + js + '\n</script>' + html[m.end():])
         png = os.path.join(SHOTS, name + '.png')
+        w, h = SIZES.get(name, (800, 1250))
         subprocess.run([
             pick_browser(), '--headless=new', '--disable-gpu', '--hide-scrollbars',
             '--no-sandbox', '--virtual-time-budget=150',
-            '--window-size=800,1250', '--screenshot=' + png,
+            '--window-size=%d,%d' % (w, h), '--screenshot=' + png,
             '--user-data-dir=' + os.path.join(tmp, 'profile'),
             'file:///' + path.replace(os.sep, '/'),
         ], capture_output=True, timeout=120)
