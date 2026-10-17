@@ -53,8 +53,8 @@ sec "2. 本机路径与隐私信息"
 PATH_RE='([A-Za-z]:\\\\Users\\\\|[A-Za-z]:/Users/|/Users/[A-Za-z]|/home/[a-z]|E:/workbuddy|E:\\\\workbuddy|\.workbuddy/)'
 out=$(scan "$PATH_RE")
 if [ -n "$out" ]; then
-  # 这几个文件里出现 .workbuddy/ 字样属于规则说明与自检逻辑，不是真实本机路径
-  real=$(echo "$out" | grep -vE '^(docs/DESIGN\.md|\.gitignore|scripts/preflight\.sh):')
+  # 这几个文件里出现路径/ .workbuddy 字样属于规则说明与自检逻辑，不是真实本机路径
+  real=$(echo "$out" | grep -vE '^(docs/DESIGN\.md|docs/PRE-RELEASE-CHECKLIST\.md|\.gitignore|scripts/preflight\.sh):')
   if [ -n "$real" ]; then bad "发现本机绝对路径（会暴露目录结构/用户名）："; echo "$real" | sed 's/^/      /'
   else ok "仅在忽略规则/自检脚本/文档说明中出现 .workbuddy，不涉及真实本机路径"; fi
 else ok "无本机绝对路径"; fi
