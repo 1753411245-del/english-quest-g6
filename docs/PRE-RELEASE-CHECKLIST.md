@@ -106,3 +106,16 @@ git push origin main
    ```bash
    git config --global --unset http.schannelCheckRevoke
    ```
+
+---
+
+## 七、发布记录
+
+每次推送到 `main` 都在这里留一行，便于回溯"哪次发布、检查过什么、结果如何"。
+
+| 日期 | 提交 | CI 运行 | 检查结果 | 线上地址 |
+|---|---|---|---|---|
+| 2026-10-17 | `37bd1a6` | #1 | preflight ✅ / deploy ❌（Pages 未开启） | — |
+| 2026-10-17 | `37bd1a6` | #2 | preflight ✅ / deploy ✅ | https://1753411245-del.github.io/english-quest-g6/ |
+
+发布后已验证：首页返回 200、CSP 生效、页面脚本正常执行；`README.md` / `docs/` / `scripts/` / `.gitignore` 均返回 404，证明线上只有 `index.html` 一个文件（白名单生效）。
