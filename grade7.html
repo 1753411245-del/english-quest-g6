@@ -102,7 +102,7 @@
   .shead .s{font-size:11.5px;color:var(--muted);font-weight:700}
   .hintline{font-size:12.5px;color:var(--muted);margin:5px 4px 12px;line-height:1.6}
 
-  .quickrow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+  .quickrow{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
   .qbtn{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid rgba(230,235,247,.95);border-radius:18px;
     padding:13px 15px;cursor:pointer;box-shadow:var(--shadow-sm);transition:.16s;font-family:inherit;text-align:left}
   .qbtn:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#cfdbff}
@@ -348,6 +348,85 @@
     .dot{width:44px;height:44px}
     .ltr{width:36px;height:40px;font-size:16px}
     .letters{gap:7px}
+  }
+
+  /* ---------- 塔防模式 · 城堡保卫战 ---------- */
+  .tdhud{display:flex;gap:7px;margin-bottom:10px}
+  .tdhud>b{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
+    background:#fff;border:1px solid #e6ecfa;border-radius:13px;padding:8px 4px;
+    font-size:13px;font-weight:800;color:#2b3550;letter-spacing:.2px}
+  .tdhud b em{font-style:normal;font-size:11px;font-weight:800;color:#8794b0}
+  .tdhud b.life{border-color:#fbd6d8;background:#fff7f7;color:#d63f46}
+  .tdhud b.wave{border-color:#d8e0fb;background:#f6f8ff;color:#4F6BED}
+  .tdscene{position:relative;border-radius:18px;overflow:hidden;border:1px solid #e2e9fa;
+    background:#f4f8ff;box-shadow:0 10px 26px rgba(60,90,160,.09)}
+  .tdscene svg{display:block;width:100%;height:auto}
+  .tdenemy{transition:transform .16s linear}
+  .tdenemy.dead{transition:transform .16s linear,opacity .3s ease}
+  .tdslot{cursor:pointer}
+  .tdslot:active{opacity:.6}
+  .tdtower{cursor:pointer}
+  .tdflash{animation:tdFlash .45s ease}
+  @keyframes tdFlash{0%{opacity:1}40%{opacity:.25}100%{opacity:1}}
+  .tdpanel{margin-top:12px;background:#fff;border:1px solid #e6ecfa;border-radius:18px;
+    padding:14px;box-shadow:0 8px 22px rgba(60,90,160,.06)}
+  .tdpanel h3{margin:0 0 4px;font-size:15px;font-weight:800;color:#1f2b45}
+  .tdpanel .tp-sub{font-size:12.5px;color:#8794b0;line-height:1.55;margin-bottom:11px}
+  .tdpick{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .tdpick button{display:flex;align-items:center;gap:8px;padding:10px;border-radius:13px;
+    border:1.5px solid #e6ecfa;background:#fbfcff;cursor:pointer;text-align:left;font-family:inherit}
+  .tdpick button:active{transform:scale(.97)}
+  .tdpick button[disabled]{opacity:.42;cursor:not-allowed}
+  .tdpick .ic{width:28px;height:28px;border-radius:9px;display:flex;align-items:center;
+    justify-content:center;color:#fff;font-size:13px;font-weight:800;flex:0 0 auto}
+  .tdpick .nm{font-size:13px;font-weight:800;color:#243050;line-height:1.25}
+  .tdpick .ct{font-size:11.5px;color:#8794b0;font-weight:700}
+  .tdgo{width:100%;margin-top:10px;padding:13px;border-radius:14px;border:0;cursor:pointer;
+    background:linear-gradient(135deg,#4F6BED,#7C5CFF);color:#fff;font-size:15px;font-weight:800;
+    font-family:inherit;box-shadow:0 10px 22px rgba(79,107,237,.3)}
+  .tdgo:active{transform:scale(.985)}
+  .tdgo.ghost{background:#f2f5fd;color:#4F6BED;box-shadow:none;border:1.5px solid #dbe4fb}
+  .tdqtag{display:inline-block;padding:3px 9px;border-radius:8px;font-size:11.5px;
+    font-weight:800;margin-bottom:8px}
+  .tdqprompt{font-size:18px;font-weight:800;color:#1a2540;line-height:1.45;margin-bottom:4px;
+    word-break:break-word}
+  .tdqcn{font-size:12.5px;color:#8794b0;margin-bottom:12px}
+  .tdopts{display:grid;gap:8px}
+  .tdopt{width:100%;padding:12px 14px;border-radius:13px;border:1.5px solid #e2e8f8;
+    background:#fbfcff;font-size:15px;font-weight:700;color:#243050;text-align:left;
+    cursor:pointer;font-family:inherit;transition:.15s}
+  .tdopt:active{transform:scale(.985)}
+  .tdopt.ok{border-color:#25b07a;background:#eafaf3;color:#12734e}
+  .tdopt.no{border-color:#e0484f;background:#fff2f3;color:#b62d34}
+  .tdopt[disabled]{cursor:default}
+  .tdspell{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin-bottom:12px}
+  .tdltr{width:40px;height:44px;border-radius:11px;border:1.5px solid #dde5f7;background:#fff;
+    font-size:18px;font-weight:800;color:#243050;cursor:pointer;font-family:inherit}
+  .tdltr.used{opacity:.22;pointer-events:none}
+  .tdltr:active{transform:scale(.94)}
+  .tdline{min-height:50px;border-bottom:2.5px dashed #dbe3f7;display:flex;gap:5px;
+    align-items:center;justify-content:center;margin-bottom:12px;padding-bottom:6px}
+  .tdline .sl{width:30px;height:36px;border-radius:9px;background:#eef2fd;display:flex;
+    align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#243050}
+  .tdresult{text-align:center;padding:6px 0 2px}
+  .tdresult .big{font-size:22px;font-weight:800;margin-bottom:6px}
+  .tdresult .sm{font-size:13px;color:#8794b0;line-height:1.6;margin-bottom:12px}
+  .tdmapcard{display:flex;gap:12px;align-items:center;padding:14px;border-radius:18px;
+    background:#fff;border:1px solid #e6ecfa;box-shadow:0 8px 22px rgba(60,90,160,.07);
+    cursor:pointer;margin-bottom:10px;width:100%;text-align:left;font-family:inherit}
+  .tdmapcard .th{width:52px;height:52px;border-radius:15px;flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:19px;font-weight:800}
+  .tdmapcard .nm{font-size:15px;font-weight:800;color:#1f2b45}
+  .tdmapcard .ds{font-size:12px;color:#8794b0;margin-top:2px}
+  .tdlegend{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}
+  .tdlegend div{display:flex;align-items:center;gap:7px;font-size:12.5px;color:#5b6780;font-weight:700}
+  .tdlegend i{width:11px;height:11px;border-radius:4px;flex:0 0 auto}
+  @media (max-width:560px){
+    .tdpick{grid-template-columns:1fr}
+    .tdqprompt{font-size:16px}
+    .tdhud>b{font-size:12px;padding:7px 3px}
+    .tdltr{width:35px;height:40px;font-size:16px}
+    .tdlegend{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -663,11 +742,12 @@ function loadState(){
         s.streak = s.streak || 0; s.lastDate = s.lastDate || null;
         s.collect = s.collect || []; s.wrong = s.wrong || [];
         s.sound = s.sound !== false;
+        s.td = s.td || {};
         return s;
       }
     }
   } catch(e){}
-  return { coins:0, xp:0, streak:0, lastDate:null, progress:{}, collect:[], wrong:[], sound:true };
+  return { coins:0, xp:0, streak:0, lastDate:null, progress:{}, collect:[], wrong:[], sound:true, td:{} };
 }
 function save(){ try { localStorage.setItem(LS, JSON.stringify(S)); } catch(e){} }
 function lv(){ return 1 + Math.floor(S.xp / 120); }
@@ -715,6 +795,10 @@ function icoMedal(){
 function icoReview(){
   return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
     '<path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1"/><path d="M3.2 4.5v4.4h4.4"/></svg>';
+}
+function icoTower(){
+  return '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">' +
+    '<path d="M6 21V9l6-4 6 4v12"/><path d="M4.5 9h15"/><path d="M10 21v-5h4v5"/><path d="M12 5V2.5"/></svg>';
 }
 
 /* ============================================================
@@ -1109,6 +1193,7 @@ const app = document.getElementById('app');
 function goHome(){ view = { name:'home' }; render(); }
 function openUnit(uid){ sfxTap(); view = { name:'unit', unitId:uid }; render(); }
 function openCollect(){ sfxTap(); view = { name:'collect' }; render(); }
+function openTd(){ sfxTap(); view = { name:'td' }; render(); }
 function quitLevel(){
   if (confirm('退出本次练习？已答错的题会保留在复习队列。')) { goHome(); }
 }
@@ -1170,9 +1255,23 @@ function render(){
   else if (view.name === 'game') html = viewGame();
   else if (view.name === 'result') html = viewResult();
   else if (view.name === 'collect') html = viewCollect();
+  else if (view.name === 'td') html = viewTd();
+  else if (view.name === 'tdBattle') html = viewTdBattle();
   app.innerHTML = topbar() + '<div class="view">' + html + '</div>';
   window.scrollTo(0,0);
   if (view.name === 'game') afterRenderGame();
+  if (view.name === 'tdBattle' && B){ B.els = {}; tdPaint(); tdPanel(); }
+}
+
+function viewTdBattle(){
+  if (!B) return viewTd();
+  return '<div class="phead">' +
+      '<button class="iconbtn" onclick="quitTd()">←</button>' +
+      '<div><div class="pht">' + esc(B.map.name) + '</div><div class="phs">' + esc(B.map.no) + '</div></div>' +
+    '</div>' +
+    tdHud() +
+    '<div class="tdscene">' + tdSceneSVG() + '</div>' +
+    '<div id="tdPanel"></div>';
 }
 
 function viewHome(){
@@ -1241,6 +1340,10 @@ function viewHome(){
     '<button class="qbtn" onclick="openReview()"' + (S.wrong.length ? '' : ' disabled') + '>' +
       '<span class="qi" style="background:linear-gradient(140deg,#ffe6e8,#ffd0d5);color:#d33a42">' + icoReview() + '</span>' +
       '<span class="qm"><span class="qt">错题复习</span><span class="qs">' + (S.wrong.length ? S.wrong.length + ' 道待复习' : '暂无错题') + '</span></span>' +
+    '</button>' +
+    '<button class="qbtn" onclick="openTd()">' +
+      '<span class="qi" style="background:linear-gradient(140deg,#e4f0ff,#cfe0ff);color:#2f55c9">' + icoTower() + '</span>' +
+      '<span class="qm"><span class="qt">城堡保卫战</span><span class="qs">塔防 · 守住语法错误</span></span>' +
     '</button>' +
   '</div>' +
   '<div class="shead"><h2>选择单元</h2><span class="s">共 ' + BOOK.units.length + ' 个单元</span></div>' +
@@ -1894,7 +1997,628 @@ function viewCollect(){
   '<div class="collectgrid">' + cards + locked + '</div>';
 }
 
-/* 启动 */
+/* ============================================================
+   塔防模式 · 语言城堡保卫战
+   敌人身上写着一个真实的典型错误，只有对应类型的塔打得动它
+   ============================================================ */
+const TD_TOWERS = {
+  word:    { name:'词汇塔', short:'词', color:'#4F6BED', light:'#E8EDFF', range:40, cost:50 },
+  spell:   { name:'拼写塔', short:'拼', color:'#0E9E86', light:'#E2F7F2', range:36, cost:60 },
+  listen:  { name:'听力塔', short:'听', color:'#7B57D9', light:'#F0EBFF', range:44, cost:70 },
+  grammar: { name:'语法塔', short:'法', color:'#D97A28', light:'#FDF0E4', range:38, cost:75 }
+};
+const TD_KEYS = ['word','spell','listen','grammar'];
+const TD_UP = { 2:55, 3:80 };
+const TD_KILL_GOLD = 18;
+const TD_WAVE_GOLD = 25;
+const TD_SPEED = 0.030;
+
+const TD_MAPS = [{
+  id:'u1-m1', uid:'u1', no:'第 1 战场', name:'初次交锋',
+  gold:130, lives:3,
+  path:[[318,64],[250,64],[250,124],[160,124],[160,64],[58,64]],
+  slots:[[286,96],[286,32],[206,94],[200,148],[110,96],[110,32]],
+  waves:[
+    { hint:'两只词汇怪，先建一座词汇塔', kinds:['word','word'] },
+    { hint:'拼写怪混进来了，词汇塔打不动它', kinds:['word','spell','spell'] },
+    { hint:'听力怪出现，会漏听的那种', kinds:['listen','word','spell','listen'] },
+    { hint:'语法怪成群冲锋，守住城堡', kinds:['grammar','grammar','spell','grammar','listen'] }
+  ]
+}];
+
+let B = null;
+let tdSeq = 0;
+
+function tdPathInfo(path){
+  const segs = [];
+  let total = 0;
+  for (let i = 1; i < path.length; i++){
+    const a = path[i-1], b = path[i];
+    const len = Math.hypot(b[0]-a[0], b[1]-a[1]);
+    if (len < 0.001) continue;
+    segs.push({ a:a, b:b, len:len, start:total });
+    total += len;
+  }
+  return { segs:segs, total:total };
+}
+function tdPointAt(info, t){
+  const d = Math.max(0, Math.min(1, t)) * info.total;
+  for (let i = 0; i < info.segs.length; i++){
+    const s = info.segs[i];
+    if (d <= s.start + s.len + 0.001 || i === info.segs.length - 1){
+      const k = Math.max(0, Math.min(1, (d - s.start) / s.len));
+      return [s.a[0] + (s.b[0]-s.a[0])*k, s.a[1] + (s.b[1]-s.a[1])*k];
+    }
+  }
+  return info.segs[0].a;
+}
+function tdDist(a, b){ return Math.hypot(a[0]-b[0], a[1]-b[1]); }
+function tdClip(s, n){
+  s = String(s);
+  return s.length > n ? s.slice(0, n - 1) + '…' : s;
+}
+function tdMisspell(w){
+  const clean = String(w).replace(/[^a-zA-Z]/g,'');
+  if (clean.length < 4) return clean.toLowerCase();
+  const a = clean.split('');
+  const i = 1 + rnd(a.length - 2);
+  const t = a[i]; a[i] = a[i-1]; a[i-1] = t;
+  return a.join('');
+}
+
+/* --- 出题：题型由敌人类型决定 --- */
+function tdPickQuiz(kind, u){
+  if (kind === 'word') return makeWordChoice(u, sample(u.words,1)[0], 'cn2en');
+  if (kind === 'spell') return makeSpell(u, sample(u.words,1)[0]);
+  if (kind === 'listen') return rnd(2)
+    ? makeListenWord(u, sample(u.words,1)[0])
+    : makeListenSentence(u, sample(u.sentences,1)[0]);
+  return makeGrammar(u, sample(u.grammar,1)[0]);
+}
+function tdBadge(q){
+  if (q.type === 'spell') return { bad: tdMisspell(q.answer), good: q.answer };
+  if (q.type === 'grammar'){
+    const wrong = q.options.filter(function(o){ return o !== q.answer; })[0] || '';
+    return { bad: wrong, good: q.answer };
+  }
+  if (q.type === 'listen') return { bad: '???', good: q.audio };
+  return { bad: q.prompt, good: q.answer };
+}
+
+/* --- 进入战斗 --- */
+function tdStart(mapId){
+  const map = TD_MAPS.find(function(m){ return m.id === mapId; });
+  if (!map) return;
+  const u = BOOK.units.find(function(x){ return x.id === map.uid; });
+  if (!u) return;
+  sfxTap(); touchStreak();
+  B = {
+    map: map, unit: u, info: tdPathInfo(map.path),
+    gold: map.gold, lives: map.lives,
+    waveIdx: 0, phase: 'build', paused: true,
+    towers: {}, enemies: [], els: {}, enext: 1,
+    quiz: null, quizE: null, quizSlot: -1, answered: false, spell: [],
+    queue: [], spawnT: 0, sel: null,
+    stats: { q:0, ok:0 }, last: 0, loopId: 0
+  };
+  view = { name:'tdBattle', mapId: mapId };
+  render();
+  loopStart();
+}
+function loopStart(){
+  if (!B) return;
+  const my = ++tdSeq;
+  B.loopId = my;
+  function loop(ts){
+    if (!B || B.loopId !== my || view.name !== 'tdBattle') return;
+    tdFrame(ts);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+}
+function quitTd(){
+  B = null;
+  view = { name:'td' };
+  render();
+}
+
+/* --- 帧循环 --- */
+function tdFrame(ts){
+  if (!B.last) B.last = ts;
+  const dt = Math.min((ts - B.last) / 1000, 0.06);
+  B.last = ts;
+
+  for (const k in B.towers){
+    if (B.towers[k] && B.towers[k].cd > 0) B.towers[k].cd -= dt;
+  }
+  B.enemies.forEach(function(e){ if (e.dead) e.deadT = (e.deadT || 0) + dt; });
+
+  if (B.phase === 'fight' && !B.paused){
+    if (B.queue.length){
+      B.spawnT -= dt;
+      if (B.spawnT <= 0){
+        const n = B.queue.shift();
+        tdSpawn(n);
+        B.spawnT = n.delay;
+      }
+    }
+    let alive = 0;
+    B.enemies.forEach(function(e){
+      if (e.hp <= 0) return;
+      e.pos += TD_SPEED * dt;
+      if (e.pos >= 1){
+        e.pos = 1; e.hp = 0; e.escaped = true;
+        B.lives--;
+        sfxNo();
+        if (B.lives <= 0) tdEnd('lose');
+      } else alive++;
+    });
+    if (B.phase === 'fight') tdEngage();
+    if (B.phase === 'fight' && !B.queue.length && alive === 0) tdWaveClear();
+  }
+
+  for (let i = B.enemies.length - 1; i >= 0; i--){
+    const e = B.enemies[i];
+    if (e.dead && (e.deadT || 0) > 0.95){
+      const el = B.els['e' + e.id];
+      if (el) el.remove();
+      delete B.els['e' + e.id];
+      B.enemies.splice(i, 1);
+    }
+  }
+
+  tdPaint();
+}
+
+function tdSpawn(n){
+  const q = tdPickQuiz(n.kind, B.unit);
+  B.enemies.push({
+    id: B.enext++, kind: n.kind, hp: n.hp || 1, maxHp: n.hp || 1,
+    pos: 0, q: q, badge: tdBadge(q), tried: {}
+  });
+}
+
+function tdEngage(){
+  for (let k = 0; k < B.enemies.length; k++){
+    const e = B.enemies[k];
+    if (e.hp <= 0 || e.dead) continue;
+    const p = tdPointAt(B.info, e.pos);
+    for (let i = 0; i < B.map.slots.length; i++){
+      const t = B.towers[i];
+      if (!t || t.kind !== e.kind || t.cd > 0 || e.tried[i]) continue;
+      if (tdDist(p, B.map.slots[i]) > TD_TOWERS[t.kind].range) continue;
+      e.tried[i] = true;
+      tdAsk(e, i);
+      return;
+    }
+  }
+}
+
+function tdAsk(e, slot){
+  B.paused = true;
+  B.quiz = e.q;
+  B.quizE = e;
+  B.quizSlot = slot;
+  B.answered = false;
+  B.spell = [];
+  B.sel = null;
+  tdPanel();
+  if (e.q.type === 'listen'){
+    setTimeout(function(){ if (B && B.quiz === e.q) speakText(e.q.audio); }, 320);
+  }
+}
+
+/* --- 答题 --- */
+function tdChoose(i){
+  if (!B || !B.quiz || B.answered) return;
+  const q = B.quiz;
+  B.answered = true;
+  sfxTap();
+  const ok = q.options[i] === q.answer;
+  const btns = document.querySelectorAll('#tdPanel .tdopt');
+  for (let k = 0; k < btns.length; k++){
+    btns[k].disabled = true;
+    if (btns[k].getAttribute('data-v') === q.answer) btns[k].classList.add('ok');
+    else if (k === i) btns[k].classList.add('no');
+  }
+  setTimeout(function(){ tdResolve(ok); }, ok ? 560 : 1000);
+}
+function tdPickLtr(i){
+  if (!B || !B.quiz || B.answered) return;
+  if (B.spell.indexOf(i) >= 0) return;
+  sfxTap();
+  B.spell.push(i);
+  tdSpellLine();
+  if (B.spell.length >= B.quiz.answer.length){
+    setTimeout(function(){ tdCheckSpell(); }, 240);
+  }
+}
+function tdCheckSpell(){
+  if (!B || !B.quiz || B.answered) return;
+  const q = B.quiz;
+  const built = B.spell.map(function(i){ return q.letters[i]; }).join('');
+  B.answered = true;
+  const ok = built.toLowerCase() === q.answer.toLowerCase();
+  if (ok) tdResolve(true);
+  else {
+    sfxNo();
+    const line = document.getElementById('tdLine');
+    if (line) line.classList.add('tdflash');
+    setTimeout(function(){ tdResolve(false); }, 900);
+  }
+}
+function tdResolve(ok){
+  if (!B) return;
+  const q = B.quiz, e = B.quizE, si = B.quizSlot;
+  B.stats.q++;
+  if (ok){
+    B.stats.ok++;
+    sfxOk();
+    if (e){
+      e.hp--;
+      const el = B.els['e' + e.id];
+      const tb = el ? el.querySelector('.tbadge') : null;
+      if (e.hp <= 0){
+        e.dead = true; e.deadT = 0;
+        B.gold += TD_KILL_GOLD;
+        sfxStar();
+        if (el){
+          if (tb){ tb.textContent = tdClip(e.badge.good, 9); tb.setAttribute('fill', '#12734e'); }
+          const cir = el.querySelector('circle');
+          if (cir) cir.setAttribute('stroke', '#25b07a');
+          setTimeout(function(){ el.style.opacity = '0'; }, 430);
+        }
+      } else if (tb){
+        tb.textContent = tdClip(e.badge.good, 9);
+        tb.setAttribute('fill', '#12734e');
+      }
+    }
+    S.xp = (S.xp || 0) + 4; save();
+  } else {
+    sfxNo();
+    addWrong(q);
+    if (B.towers[si]) B.towers[si].cd = 5;
+  }
+  B.quiz = null; B.quizE = null; B.quizSlot = -1; B.spell = [];
+  B.paused = false;
+  B.last = 0;
+  tdPanel();
+}
+
+/* --- 波次 --- */
+function tdNextWave(){
+  if (!B || B.phase !== 'build') return;
+  const w = B.map.waves[B.waveIdx];
+  if (!w) return;
+  sfxTap();
+  B.queue = w.kinds.map(function(k, i){ return { kind:k, hp:1, delay: i === 0 ? 0 : 1.15 }; });
+  B.spawnT = 0.2;
+  B.phase = 'fight';
+  B.paused = false;
+  B.last = 0;
+  tdPanel();
+}
+function tdWaveClear(){
+  B.phase = 'build';
+  B.paused = true;
+  B.gold += TD_WAVE_GOLD;
+  if (B.waveIdx + 1 >= B.map.waves.length){
+    tdEnd('win');
+    return;
+  }
+  B.waveIdx++;
+  sfxStar();
+  tdPanel();
+}
+function tdEnd(kind){
+  if (!B) return;
+  B.phase = kind;
+  B.paused = true;
+  if (kind === 'win'){
+    sfxWin();
+    S.td = S.td || {};
+    S.td[B.map.id] = 1;
+    S.xp = (S.xp || 0) + 30;
+    save();
+    fireConfetti(28);
+  }
+  tdPanel();
+}
+
+/* --- 建塔 / 升级 --- */
+function tdTapSlot(i){
+  if (!B || B.towers[i] || B.quiz) return;
+  sfxTap();
+  B.sel = { type:'build', slot:i };
+  tdPanel();
+}
+function tdTapTower(i){
+  if (!B || !B.towers[i] || B.quiz) return;
+  sfxTap();
+  B.sel = { type:'tower', slot:i };
+  tdPanel();
+}
+function tdCancel(){
+  if (!B) return;
+  B.sel = null;
+  tdPanel();
+}
+function tdBuild(i, kind){
+  if (!B || !B.sel || B.sel.type !== 'build') return;
+  const cfg = TD_TOWERS[kind];
+  if (B.gold < cfg.cost) return;
+  B.gold -= cfg.cost;
+  B.towers[B.sel.slot] = { kind:kind, lv:1, cd:0 };
+  const hole = document.getElementById('tdslot' + B.sel.slot);
+  if (hole) hole.remove();
+  B.sel = null;
+  sfxStar();
+  tdPaint();
+  tdPanel();
+}
+function tdUpgrade(i){
+  if (!B || !B.towers[i]) return;
+  const t = B.towers[i];
+  if (t.lv >= 3) return;
+  const cost = TD_UP[t.lv + 1];
+  if (B.gold < cost) return;
+  B.gold -= cost;
+  t.lv++;
+  sfxStar();
+  tdPanel();
+}
+
+/* --- 渲染 --- */
+function tdHud(){
+  return '<div class="tdhud">' +
+    '<b><em>金币</em>' + B.gold + '</b>' +
+    '<b class="life"><em>生命</em>' + B.lives + '</b>' +
+    '<b class="wave"><em>波次</em>' + Math.min(B.waveIdx + 1, B.map.waves.length) + '/' + B.map.waves.length + '</b>' +
+  '</div>';
+}
+function tdCastle(){
+  return '<g>' +
+    '<rect x="10" y="34" width="46" height="70" rx="6" fill="#dfe8ff" stroke="#3b5bd6" stroke-width="1.6"/>' +
+    '<rect x="10" y="26" width="11" height="11" fill="#dfe8ff" stroke="#3b5bd6" stroke-width="1.6"/>' +
+    '<rect x="27.5" y="26" width="11" height="11" fill="#dfe8ff" stroke="#3b5bd6" stroke-width="1.6"/>' +
+    '<rect x="45" y="26" width="11" height="11" fill="#dfe8ff" stroke="#3b5bd6" stroke-width="1.6"/>' +
+    '<path d="M25 104 L25 88 A8 8 0 0 1 41 88 L41 104 Z" fill="#a8bcf0" stroke="#3b5bd6" stroke-width="1.4"/>' +
+    '<line x1="33" y1="26" x2="33" y2="12" stroke="#3b5bd6" stroke-width="1.4"/>' +
+    '<path d="M33 12 L47 17 L33 22 Z" fill="#e0484f"/>' +
+  '</g>';
+}
+function tdSceneSVG(){
+  const m = B.map;
+  const d = 'M' + m.path.map(function(p){ return p[0] + ' ' + p[1]; }).join(' L ');
+  let slots = '';
+  m.slots.forEach(function(s, i){
+    if (B.towers[i]) return;
+    slots += '<g id="tdslot' + i + '" onclick="tdTapSlot(' + i + ')">' +
+      '<circle class="tdslot" cx="' + s[0] + '" cy="' + s[1] + '" r="12" fill="#fff" ' +
+        'stroke="#c3d1f0" stroke-width="1.4" stroke-dasharray="3 3"/>' +
+      '<text x="' + s[0] + '" y="' + (s[1] + 3.6) + '" text-anchor="middle" font-size="11" ' +
+        'fill="#b6c4e2" pointer-events="none">+</text>' +
+    '</g>';
+  });
+  return '<svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">' +
+    '<rect x="0" y="0" width="320" height="180" fill="#eef4ff"/>' +
+    '<path d="' + d + '" fill="none" stroke="#e6dcc6" stroke-width="19" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="' + d + '" fill="none" stroke="#f6f1e4" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>' +
+    '<path d="' + d + '" fill="none" stroke="#ded2b6" stroke-width="1" stroke-dasharray="4 7"/>' +
+    tdCastle() + slots +
+    '<g id="tdTowers"></g><g id="tdEnemies"></g>' +
+  '</svg>';
+}
+function tdPaint(){
+  if (!B) return;
+  const tg = document.getElementById('tdTowers');
+  const eg = document.getElementById('tdEnemies');
+  if (!tg || !eg) return;
+
+  for (const k in B.towers){
+    const i = +k, t = B.towers[i];
+    let el = B.els['t' + i];
+    if (!el){
+      const cfg = TD_TOWERS[t.kind];
+      const s = B.map.slots[i];
+      el = document.createElementNS('http://www.w3.org/2000/svg','g');
+      el.setAttribute('class','tdtower');
+      el.setAttribute('transform','translate(' + s[0] + ' ' + s[1] + ')');
+      el.setAttribute('onclick','tdTapTower(' + i + ')');
+      el.innerHTML = '<rect x="-12" y="-12" width="24" height="24" rx="8" fill="' + cfg.color + '"/>' +
+        '<text y="4" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">' + cfg.short + '</text>' +
+        '<text class="tlv" y="-16" text-anchor="middle" font-size="8" font-weight="700" fill="' + cfg.color + '">Lv' + t.lv + '</text>';
+      tg.appendChild(el);
+      B.els['t' + i] = el;
+    } else {
+      const lv = el.querySelector('.tlv');
+      if (lv) lv.textContent = 'Lv' + t.lv;
+    }
+  }
+
+  B.enemies.forEach(function(e){
+    if (e.dead && (e.deadT || 0) > 0.4) return;
+    let el = B.els['e' + e.id];
+    if (!el){
+      const cfg = TD_TOWERS[e.kind];
+      el = document.createElementNS('http://www.w3.org/2000/svg','g');
+      el.setAttribute('class','tdenemy');
+      el.innerHTML =
+        '<ellipse cx="0" cy="12" rx="11" ry="2.8" fill="#3c508c" opacity="0.14"/>' +
+        '<circle r="11" fill="#fff" stroke="' + cfg.color + '" stroke-width="1.9"/>' +
+        '<circle cx="-4" cy="-4" r="1.7" fill="' + cfg.color + '"/>' +
+        '<circle cx="4" cy="-4" r="1.7" fill="' + cfg.color + '"/>' +
+        '<path d="M-4 1.5 Q0 5.5 4 1.5" fill="none" stroke="' + cfg.color + '" stroke-width="1.4" stroke-linecap="round"/>' +
+        '<text class="tbadge" y="-15" text-anchor="middle" font-size="9.5" font-weight="700" ' +
+          'fill="#42506e" stroke="#eef4ff" stroke-width="3" paint-order="stroke">' +
+          esc(tdClip(e.badge.bad, 9)) + '</text>';
+      eg.appendChild(el);
+      B.els['e' + e.id] = el;
+    }
+    const p = tdPointAt(B.info, e.pos);
+    el.setAttribute('transform','translate(' + p[0].toFixed(1) + ' ' + p[1].toFixed(1) + ')');
+  });
+}
+
+function tdPanel(){
+  const el = document.getElementById('tdPanel');
+  if (!el) return;
+  el.innerHTML = tdPanelHTML();
+}
+function tdPanelHTML(){
+  if (!B) return '';
+  if (B.quiz) return tdQuizHTML();
+
+  if (B.phase === 'win') return tdEndHTML(true);
+  if (B.phase === 'lose') return tdEndHTML(false);
+
+  if (B.sel && B.sel.type === 'build') return tdBuildHTML();
+  if (B.sel && B.sel.type === 'tower') return tdTowerHTML(B.sel.slot);
+
+  const w = B.map.waves[B.waveIdx];
+  const left = B.gold;
+  let legend = '';
+  TD_KEYS.forEach(function(k){
+    const c = TD_TOWERS[k];
+    legend += '<div><i style="background:' + c.color + '"></i>' + c.name + ' · ' + c.cost + ' 金</div>';
+  });
+  return '<div class="tdpanel">' +
+    '<h3>' + (w ? '第 ' + (B.waveIdx + 1) + ' 波 · 布防' : '布防') + '</h3>' +
+    '<div class="tp-sub">' + (w ? '下一波：' + esc(w.hint) : '') + '　金币 ' + left + '</div>' +
+    '<div class="tdlegend">' + legend + '</div>' +
+    '<div class="tp-sub">点战场上的虚线圆圈建塔。只有同类型的塔才能伤到那种颜色的怪。</div>' +
+    (w ? '<button class="tdgo" onclick="tdNextWave()">开始第 ' + (B.waveIdx + 1) + ' 波</button>' : '') +
+  '</div>';
+}
+function tdBuildHTML(){
+  let btns = '';
+  TD_KEYS.forEach(function(k){
+    const c = TD_TOWERS[k];
+    const ok = B.gold >= c.cost;
+    btns += '<button onclick="tdBuild(0,\'' + k + '\')"' + (ok ? '' : ' disabled') + '>' +
+      '<span class="ic" style="background:' + c.color + '">' + c.short + '</span>' +
+      '<span><span class="nm">' + c.name + '</span><br><span class="ct">' + c.cost + ' 金币</span></span>' +
+    '</button>';
+  });
+  return '<div class="tdpanel">' +
+    '<h3>建一座塔</h3>' +
+    '<div class="tp-sub">这片空地还空着。当前金币 ' + B.gold + '。</div>' +
+    '<div class="tdpick">' + btns + '</div>' +
+    '<button class="tdgo ghost" onclick="tdCancel()">先不建</button>' +
+  '</div>';
+}
+function tdTowerHTML(i){
+  const t = B.towers[i];
+  if (!t) return '';
+  const c = TD_TOWERS[t.kind];
+  const cost = TD_UP[t.lv + 1];
+  const max = t.lv >= 3;
+  return '<div class="tdpanel">' +
+    '<h3>' + c.name + ' · Lv' + t.lv + '</h3>' +
+    '<div class="tp-sub">只打' + c.name.replace('塔','') + '类的怪，射程和伤害随等级提升。</div>' +
+    (max
+      ? '<button class="tdgo ghost" onclick="tdCancel()">已经是满级</button>'
+      : '<button class="tdgo" onclick="tdUpgrade(' + i + ')">升到 Lv' + (t.lv + 1) + '　' + cost + ' 金币</button>') +
+    '<button class="tdgo ghost" onclick="tdCancel()">返回</button>' +
+  '</div>';
+}
+function tdQuizHTML(){
+  const q = B.quiz;
+  const c = TD_TOWERS[q.type === 'choice' ? 'word' : q.type] || TD_TOWERS.word;
+  let body = '';
+  let tag = '';
+  if (q.type === 'spell'){
+    tag = '拼写塔 · 拼写';
+    let ltrs = '';
+    q.letters.forEach(function(ch, i){
+      const used = B.spell.indexOf(i) >= 0;
+      ltrs += '<button class="tdltr' + (used ? ' used' : '') + '" onclick="tdPickLtr(' + i + ')">' + esc(ch) + '</button>';
+    });
+    body = '<div class="tdline" id="tdLine">' + tdSpellSlots() + '</div>' +
+      '<div class="tdspell">' + ltrs + '</div>';
+    body = '<div class="tdqprompt">' + esc(q.cn) + '</div>' +
+      '<div class="tdqcn">' + esc(q.hint || '') + '</div>' + body;
+  } else if (q.type === 'listen'){
+    tag = '听力塔 · 听力';
+    body = '<div class="tdqprompt">' + esc(q.prompt) + '</div>' +
+      '<div class="tdqcn">点下面的按钮可以再听一次</div>' +
+      '<button class="tdgo ghost" onclick="tdReplay()">播放录音</button>' +
+      '<div class="tdopts" style="margin-top:10px">' + tdOpts() + '</div>';
+  } else if (q.type === 'grammar'){
+    tag = '语法塔 · ' + esc(q.point || '语法');
+    body = '<div class="tdqprompt">' + esc(q.prompt) + '</div>' +
+      '<div class="tdopts">' + tdOpts() + '</div>';
+  } else {
+    tag = '词汇塔 · 词汇';
+    body = '<div class="tdqprompt">' + esc(q.prompt) + '</div>' +
+      '<div class="tdqcn">选出正确的英文</div>' +
+      '<div class="tdopts">' + tdOpts() + '</div>';
+  }
+  return '<div class="tdpanel">' +
+    '<span class="tdqtag" style="background:' + c.light + ';color:' + c.color + '">' + tag + '</span>' +
+    body +
+  '</div>';
+}
+function tdOpts(){
+  const q = B.quiz;
+  let s = '';
+  q.options.forEach(function(o, i){
+    s += '<button class="tdopt" data-v="' + esc(o) + '" onclick="tdChoose(' + i + ')">' + esc(o) + '</button>';
+  });
+  return s;
+}
+function tdSpellSlots(){
+  const q = B.quiz;
+  let s = '';
+  for (let i = 0; i < q.answer.length; i++){
+    const idx = B.spell[i];
+    s += '<span class="sl">' + (idx == null ? '' : esc(q.letters[idx])) + '</span>';
+  }
+  return s;
+}
+function tdSpellLine(){
+  const line = document.getElementById('tdLine');
+  if (line) line.innerHTML = tdSpellSlots();
+}
+function tdReplay(){
+  if (B && B.quiz && B.quiz.audio) speakText(B.quiz.audio);
+}
+function tdEndHTML(win){
+  const acc = B.stats.q ? Math.round(B.stats.ok / B.stats.q * 100) : 0;
+  return '<div class="tdpanel"><div class="tdresult">' +
+    '<div class="big" style="color:' + (win ? '#12734e' : '#b62d34') + '">' +
+      (win ? '城堡守住了！' : '城堡被攻破了') + '</div>' +
+    '<div class="sm">答题 ' + B.stats.q + ' 道，答对 ' + B.stats.ok + ' 道（' + acc + '%）<br>' +
+      (win ? '这个战场的语法错误被你清理干净了' : '漏掉的怪会写进错题本，去训练营再收拾它') + '</div>' +
+    '<button class="tdgo" onclick="tdStart(\'' + B.map.id + '\')">' +
+      (win ? '再打一次' : '重新守城') + '</button>' +
+    '<button class="tdgo ghost" onclick="quitTd()">回到战场列表</button>' +
+  '</div></div>';
+}
+
+/* --- 战场列表 --- */
+function viewTd(){
+  const open = TD_MAPS.filter(function(m){ return BOOK.units.some(function(u){ return u.id === m.uid; }); });
+  let cards = '';
+  open.forEach(function(m){
+    const u = BOOK.units.find(function(x){ return x.id === m.uid; });
+    const done = S.td && S.td[m.id];
+    cards += '<button class="tdmapcard" onclick="tdStart(\'' + m.id + '\')">' +
+      '<span class="th" style="background:' + u.color + '">' + (done ? '✓' : '战') + '</span>' +
+      '<span style="flex:1"><span class="nm">' + esc(m.no + ' · ' + m.name) + '</span>' +
+      '<div class="ds">' + esc(u.no + ' ' + u.cn) + ' · ' + m.waves.length + ' 波</div></span>' +
+    '</button>';
+  });
+  return '<div class="phead">' +
+      '<button class="iconbtn" onclick="goHome()">←</button>' +
+      '<div><div class="pht">城堡保卫战</div><div class="phs">用学过的知识守住城堡</div></div>' +
+    '</div>' +
+    '<div class="hintline">怪身上写着一个真实的错误。建同类型的塔才打得动它，答对才能把错误改过来。</div>' +
+    cards +
+    '<div class="hintline">更多战场会随单元逐个开放</div>';
+}
+
+/* --- 启动 --- */
 render();
 </script>
 </body>

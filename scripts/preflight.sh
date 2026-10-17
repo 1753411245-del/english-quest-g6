@@ -95,9 +95,10 @@ for P in $PAGES; do
     else bad "调用麦克风但缺少使用前的隐私说明"; fi
   fi
 
-  out=$(grep -nIE 'https?://' "$P")
+  # www.w3.org 是 SVG / XHTML 的命名空间标识符，不会发起请求，排除掉避免误报
+  out=$(grep -nIE 'https?://' "$P" | grep -v 'www\.w3\.org/')
   if [ -n "$out" ]; then warn "出现网址（确认只是文案而非请求）："; echo "$out" | sed 's/^/      /'
-  else ok "页面内无任何网址"; fi
+  else ok "页面内无任何外部网址或请求地址"; fi
 done
 
 # -------------------------------------------------------------
