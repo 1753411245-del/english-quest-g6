@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,7 +16,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # 发布前安全检查：密钥 / 隐私 / 外部请求 / 仓库卫生
+  # 不通过则后续 deploy 不会执行，避免把问题内容推上线
+  preflight:
+    name: Security preflight
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Run publish checks
+        run: bash scripts/preflight.sh
+
   deploy:
+    needs: preflight
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
@@ -23,6 +37,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      # 只发布明确白名单的静态文件，不整库上线。
+      # 即使将来有敏感文件误入仓库，也不会被 Pages 提供出去。
+      - name: Stage site
+        run: |
+          mkdir -p _site
+          cp index.html _site/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -32,7 +53,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - name: Deploy to GitHub Pages
         id: deployment

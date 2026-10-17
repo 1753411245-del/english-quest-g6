@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#4f6bed">
+<!-- 安全基线：只允许内联脚本与样式，禁止一切外部资源、网络请求和表单提交。
+     若日后需要引入外部资源，请先更新此策略，不要直接删除。 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; media-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
 <title>英语闯关 · 六年级上册</title>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -892,7 +896,9 @@ function viewHome(){
   '<div class="shead"><h2>选择单元</h2><span class="s">共 6 个单元</span></div>' +
   '<div class="hintline">跟随课堂进度，先玩 Unit 1 / Unit 2</div>' +
   '<div class="ugrid">' + cards + '</div>' +
-  '<div class="footer"><button class="link" onclick="resetAll()">清除学习记录</button></div>';
+  '<div class="footer"><button class="link" onclick="resetAll()">清除学习记录</button>' +
+    '<div class="qsub" style="margin-top:10px;font-size:11px;opacity:.75">进度只存在这台设备的浏览器里，不会上传到任何服务器</div>' +
+  '</div>';
 }
 
 function viewUnit(uid){
@@ -1046,7 +1052,8 @@ function renderSpeak(q){
   '<div class="speakcn">' + esc(q.cn) + '</div>' +
   '<div class="center" style="margin-top:16px"><button class="btn ghost sm" onclick="playCurrent()">▶ 听示范</button></div>' +
   '<button class="mic" id="micBtn" onclick="startRecord()">点我<br>朗读</button>' +
-  '<div class="qsub" id="recTip" style="margin-top:16px">先听示范，再点按钮朗读</div>';
+  '<div class="qsub" id="recTip" style="margin-top:16px">先听示范，再点按钮朗读</div>' +
+  '<div class="qsub" style="margin-top:8px;font-size:11px;opacity:.8">语音识别由浏览器提供，本游戏不上传、不保存录音</div>';
 }
 
 function afterRenderGame(){
@@ -1178,8 +1185,34 @@ function sim(a, b){
   let hit = 0; a.forEach(function(w){ if (setB[w]) hit++; });
   return hit / a.length;
 }
+/* 首次使用麦克风前先说明：音频去哪、游戏有没有服务器、能不能拒绝 */
+function micNotice(){
+  const fb = document.getElementById('fb');
+  if (!fb) return;
+  fb.className = 'fb show info';
+  fb.innerHTML = '<span class="fbi">!</span><span><b>关于麦克风</b><br>' +
+    '点「同意并开始」后，浏览器会请求麦克风权限。语音识别由浏览器自带能力完成——' +
+    '本游戏没有服务器，不接收、不上传、也不保存任何录音，打分只用到识别出的文字。' +
+    '<div style="display:flex;gap:9px;margin-top:10px">' +
+      '<button class="btn sm" style="flex:1" onclick="agreeMic()">同意并开始</button>' +
+      '<button class="btn ghost sm" style="flex:1" onclick="micSkip()">不用麦克风</button>' +
+    '</div></span>';
+}
+function agreeMic(){
+  S.micOK = true; save();
+  const fb = document.getElementById('fb');
+  if (fb){ fb.className = 'fb'; fb.innerHTML = ''; }
+  startRecord();
+}
+function micSkip(){
+  const fb = document.getElementById('fb');
+  if (fb){ fb.className = 'fb'; fb.innerHTML = ''; }
+  selfAssess();
+}
+
 function startRecord(){
   if (!G || G.answered) return;
+  if (!S.micOK){ micNotice(); return; }
   const q = G.qs[G.i];
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR){ selfAssess(); return; }
@@ -1191,13 +1224,22 @@ function startRecord(){
   if (btn) btn.classList.add('rec');
   if (tip) tip.textContent = '正在听…请朗读';
   let done = false;
-  rec.onresult = function(e){
+  /* 兜底：用户忽略权限弹窗或环境没有麦克风时，9 秒后自动降级为自评，避免卡在"正在听" */
+  const timer = setTimeout(function(){
+    if (done) return;
     done = true;
+    try { rec.abort(); } catch(e){}
+    if (btn) btn.classList.remove('rec');
+    if (tip) tip.textContent = '没有听到声音，先听示范再试';
+    selfAssess();
+  }, 9000);
+  rec.onresult = function(e){
+    done = true; clearTimeout(timer);
     const heard = e.results[0][0].transcript;
     evalSpeak(q, heard);
   };
-  rec.onerror = function(){ if (!done){ if (btn) btn.classList.remove('rec'); selfAssess(); } };
-  rec.onend = function(){ if (btn) btn.classList.remove('rec'); };
+  rec.onerror = function(){ clearTimeout(timer); if (!done){ if (btn) btn.classList.remove('rec'); selfAssess(); } };
+  rec.onend = function(){ clearTimeout(timer); if (btn) btn.classList.remove('rec'); };
   try { rec.start(); } catch(e){ selfAssess(); }
 }
 function evalSpeak(q, heard){

@@ -199,10 +199,30 @@
 | 项 | 方案 |
 |---|---|
 | 仓库 | GitHub 公开仓库（`english-quest-g6`） |
-| 托管 | GitHub Pages，分支 `main` / 根目录，或由 `.github/workflows/pages.yml` 自动部署 |
+| 托管 | GitHub Pages，由 `.github/workflows/pages.yml` 自动部署（先跑 `preflight` 检查，通过才发） |
+| 产物 | 只发布 `_site/index.html` 白名单文件，不整库上线 |
 | 入口 | 仓库根目录 `index.html`（Pages 默认首页） |
 | 授权 | 代码 MIT，教材内容另行声明 |
 | 敏感文件 | `.workbuddy/`（本地项目笔记）已在 `.gitignore` 排除 |
+| 发布前检查 | `bash scripts/preflight.sh`，清单见 [PRE-RELEASE-CHECKLIST.md](PRE-RELEASE-CHECKLIST.md) |
+
+---
+
+## 11.1 安全与隐私设计
+
+本节记录与安全、隐私相关的设计约束，改动任何一条都需重新过一遍发布检查。
+
+| 面 | 设计 |
+|---|---|
+| 网络 | 零外部请求：无服务器、无 CDN、无统计、无字体、无 iframe。用 CSP `default-src 'none'` 强制约束 |
+| 数据收集 | 不收集任何个人信息；无表单、无注册、无上传 |
+| 本地存储 | 仅 `localStorage.enq_pep6a_v1`，内容为分数/错题/设置，无标识符 |
+| 麦克风 | 仅跟读关，主动点击触发；首次使用前弹说明（音频去向、可否拒绝）；拒绝或超时 9 秒自动降级为自评 |
+| 录音 | 不接收、不上传、不保存；只用识别返回的文字算相似度 |
+| 注入 | 所有动态文本经 `esc()` 转义（含单双引号）；无 `eval` / `new Function` / `document.write` |
+| 引用策略 | `referrer: no-referrer` |
+
+> 已知外部依赖风险：`SpeechRecognition` 由浏览器实现，Chrome 会上传音频到 Google、Edge 到微软。该链路不受本项目控制，已在应用内与 README 明示。
 
 ---
 

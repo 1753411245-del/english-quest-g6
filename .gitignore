@@ -20,12 +20,19 @@ node_modules/
 dist/
 build/
 
-# ---------- 本地项目笔记（不公开） ----------
+# ---------- 本地项目笔记与调试产物（不公开） ----------
 .workbuddy/
 .test*/
 .dbg.js
+.chk.js
+.dump.html
 .v_*.html
+.vw*.html
+.vw_*.png
 .shot_*.png
+
+# ---------- 部署暂存目录 ----------
+_site/
 
 # ---------- 其他 ----------
 *.log
